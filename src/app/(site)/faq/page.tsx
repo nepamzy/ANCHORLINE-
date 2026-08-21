@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { PageBodyImage } from "@/components/ui/PageBodyImage";
 import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { Reveal } from "@/components/motion/Reveal";
@@ -16,6 +17,7 @@ export default async function FAQPage() {
   return (
     <>
       <PageHeader eyebrow="FAQ" title="Frequently asked questions" bgImage="/assets/headers/faq.jpg" />
+      <PageBodyImage src="/assets/body/faq.jpg" alt="FAQ" />
 
       <Section variant="offwhite">
         <Reveal className="max-w-3xl divide-y divide-line">

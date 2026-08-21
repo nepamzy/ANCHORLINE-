@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { PageBodyImage } from "@/components/ui/PageBodyImage";
 import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { AbujaMapEmbed } from "@/components/sections/AbujaMapEmbed";
@@ -18,6 +19,7 @@ export default async function CoverageAreaPage() {
   return (
     <>
       <PageHeader eyebrow="Coverage" title="Coverage Area" bgImage="/assets/headers/coverage-area.jpg" />
+      <PageBodyImage src="/assets/body/coverage-area.jpg" alt="Coverage Area" />
 
       <Section variant="offwhite">
         <div className="grid gap-10 lg:grid-cols-2 items-center">

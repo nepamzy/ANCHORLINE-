@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { PageBodyImage } from "@/components/ui/PageBodyImage";
 import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { ClientContentPlaceholder } from "@/components/ui/ClientContentPlaceholder";
@@ -23,6 +24,7 @@ export default async function TestimonialsPage() {
         description="We're collecting feedback as we complete engagements. Testimonials will appear here as clients approve them."
         bgImage="/assets/headers/testimonials.jpg"
       />
+      <PageBodyImage src="/assets/body/testimonials.jpg" alt="Testimonials" />
 
       <Section variant="offwhite">
         {items.length === 0 ? (
