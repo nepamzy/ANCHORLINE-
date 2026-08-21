@@ -15,7 +15,7 @@ export function SiteWatermark() {
       <img
         src="/assets/site-visits/exterior-progress-2.jpg"
         alt=""
-        className="h-16 w-24 rounded-control border border-paper/40 object-cover opacity-70 shadow-lg [filter:brightness(1.2)_contrast(1.05)] sm:h-20 sm:w-28"
+        className="h-16 w-24 rounded-control border border-paper/40 object-cover shadow-lg sm:h-20 sm:w-28"
       />
     </div>
   );

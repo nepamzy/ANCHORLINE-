@@ -23,10 +23,10 @@ export function PageHeader({
             src={bgImage}
             alt=""
             aria-hidden
-            className="absolute inset-0 h-full w-full object-cover opacity-45 [filter:brightness(1.15)_contrast(1.05)]"
+            className="absolute inset-0 h-full w-full object-cover"
             style={{ objectPosition: bgPosition }}
           />
-          <div className="absolute inset-0 bg-linear-to-b from-navy-50/80 via-navy-50/70 to-navy-50" />
+          <div className="absolute inset-0 bg-linear-to-b from-navy-50/35 via-navy-50/20 to-navy-50/60" />
         </>
       )}
       <Container className="relative">

@@ -23,10 +23,10 @@ export default async function AboutPage() {
           src={watermarkPhoto.src}
           alt=""
           aria-hidden
-          className="absolute inset-0 h-full w-full object-cover opacity-45 [filter:brightness(1.15)_contrast(1.05)]"
+          className="absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: "top" }}
         />
-        <div className="absolute inset-0 bg-linear-to-b from-paper/80 via-paper/70 to-paper" />
+        <div className="absolute inset-0 bg-linear-to-b from-paper/35 via-paper/20 to-paper/60" />
         <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">About</p>
           <h1 className="mt-2 text-3xl font-bold text-navy-900 sm:text-4xl">{business.name}</h1>
