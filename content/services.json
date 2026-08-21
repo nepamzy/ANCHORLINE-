@@ -1,0 +1,19 @@
+{
+  "tiers": [
+    {
+      "name": "WATCH",
+      "forWhom": "Self-build clients wanting reassurance",
+      "includes": "Monthly site visit with dated photo/video documentation and a brief written progress report"
+    },
+    {
+      "name": "VERIFY",
+      "forWhom": "Clients making staged contractor payments",
+      "includes": "Everything in Watch, plus Bill of Quantities review and milestone certification to guide payment decisions"
+    },
+    {
+      "name": "MANAGE",
+      "forWhom": "Developers & larger private projects",
+      "includes": "Full project/construction management: contractor engagement support, contract administration, cost control, and quality supervision"
+    }
+  ]
+}

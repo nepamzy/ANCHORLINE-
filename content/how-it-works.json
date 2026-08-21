@@ -1,0 +1,9 @@
+{
+  "steps": [
+    { "step": 1, "title": "Enquiry", "body": "Client reaches out via form or WhatsApp with project location and stage." },
+    { "step": 2, "title": "Scoping call", "body": "We confirm tier, visit frequency, and any travel considerations." },
+    { "step": 3, "title": "Engagement letter", "body": "A clear written agreement is signed before work begins, covering scope, fees, and reporting schedule." },
+    { "step": 4, "title": "First visit & report", "body": "Dated photo/video documentation with a written summary, delivered within days." },
+    { "step": 5, "title": "Ongoing cadence", "body": "Regular visits and reports on the agreed schedule, with milestone certification for Verify/Manage clients." }
+  ]
+}
