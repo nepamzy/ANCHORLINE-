@@ -1,13 +1,14 @@
 import type { ReactNode } from "react";
 import { Container } from "./Container";
 
-type Variant = "paper" | "offwhite" | "navy" | "gold";
+type Variant = "paper" | "offwhite" | "navy" | "gold" | "transparent";
 
 const variantClasses: Record<Variant, string> = {
   paper: "bg-paper",
   offwhite: "bg-offwhite",
   navy: "bg-navy-900 text-white",
   gold: "bg-gold-100",
+  transparent: "",
 };
 
 export function Section({

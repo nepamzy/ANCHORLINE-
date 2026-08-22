@@ -25,7 +25,7 @@ export default async function HowItWorksPage() {
       />
 
       <PageBodyImage src="/assets/body/how-it-works.jpg" alt="How It Works">
-        <Section variant="offwhite">
+        <Section variant="transparent">
           <div className="max-w-2xl mx-auto">
             <HowItWorksScroller steps={howItWorksSteps} />
           </div>

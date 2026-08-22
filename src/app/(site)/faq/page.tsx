@@ -19,7 +19,7 @@ export default async function FAQPage() {
       <PageHeader eyebrow="FAQ" title="Frequently asked questions" bgImage="/assets/headers/faq.jpg" />
 
       <PageBodyImage src="/assets/body/faq.jpg" alt="FAQ">
-        <Section variant="offwhite">
+        <Section variant="transparent">
           <Reveal className="max-w-3xl divide-y divide-line">
             {faqItems.map((item) => (
               <details key={item.question} className="group py-5">

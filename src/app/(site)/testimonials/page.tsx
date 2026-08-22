@@ -26,7 +26,7 @@ export default async function TestimonialsPage() {
       />
 
       <PageBodyImage src="/assets/body/testimonials.jpg" alt="Testimonials">
-        <Section variant="offwhite">
+        <Section variant="transparent">
           {items.length === 0 ? (
             <Reveal>
               <ClientContentPlaceholder label="No approved client testimonials yet. This section will be populated as feedback is collected and approved. Nothing fabricated in the meantime." />

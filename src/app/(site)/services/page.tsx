@@ -26,7 +26,7 @@ export default async function ServicesPage() {
       />
 
       <PageBodyImage src="/assets/body/services.jpg" alt="Services">
-        <Section variant="gold">
+        <Section variant="transparent">
           <div className="grid gap-8 lg:grid-cols-3">
             {tiers.map((tier, i) => (
               <Reveal key={tier.name} delayMs={i * 90}>
