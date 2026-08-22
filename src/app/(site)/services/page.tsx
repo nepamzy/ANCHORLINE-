@@ -24,17 +24,18 @@ export default async function ServicesPage() {
         description="Fees are tailored to project scope, location, and visit frequency. Tap a tier to see the full details."
         bgImage="/assets/headers/services.jpg"
       />
-      <PageBodyImage src="/assets/body/services.jpg" alt="Services" />
 
-      <Section variant="gold">
-        <div className="grid gap-8 lg:grid-cols-3">
-          {tiers.map((tier, i) => (
-            <Reveal key={tier.name} delayMs={i * 90}>
-              <ServiceTierCard tier={tier} index={i} />
-            </Reveal>
-          ))}
-        </div>
-      </Section>
+      <PageBodyImage src="/assets/body/services.jpg" alt="Services">
+        <Section variant="gold">
+          <div className="grid gap-8 lg:grid-cols-3">
+            {tiers.map((tier, i) => (
+              <Reveal key={tier.name} delayMs={i * 90}>
+                <ServiceTierCard tier={tier} index={i} />
+              </Reveal>
+            ))}
+          </div>
+        </Section>
+      </PageBodyImage>
 
       <CTABanner />
     </>

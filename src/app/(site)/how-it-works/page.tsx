@@ -23,13 +23,14 @@ export default async function HowItWorksPage() {
         description="Five steps from first enquiry to ongoing reporting."
         bgImage="/assets/headers/how-it-works.jpg"
       />
-      <PageBodyImage src="/assets/body/how-it-works.jpg" alt="How It Works" />
 
-      <Section variant="offwhite">
-        <div className="max-w-2xl mx-auto">
-          <HowItWorksScroller steps={howItWorksSteps} />
-        </div>
-      </Section>
+      <PageBodyImage src="/assets/body/how-it-works.jpg" alt="How It Works">
+        <Section variant="offwhite">
+          <div className="max-w-2xl mx-auto">
+            <HowItWorksScroller steps={howItWorksSteps} />
+          </div>
+        </Section>
+      </PageBodyImage>
 
       <CTABanner />
     </>

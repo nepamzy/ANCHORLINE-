@@ -26,21 +26,22 @@ export default async function SampleReportPage() {
         description={`This is only a similar version of what you'll get, not your actual report. It uses a fictional project (${demoProject.projectName}) to show the structure and level of detail of a real Anchorline site verification report.`}
         bgImage="/assets/headers/sample-report.jpg"
       />
-      <PageBodyImage src="/assets/body/sample-report.jpg" alt="Sample Report" />
 
-      {session && (
-        <Section>
+      <PageBodyImage src="/assets/body/sample-report.jpg" alt="Sample Report">
+        {session && (
+          <Section>
+            <Reveal>
+              <ClientContentPlaceholder label="Visible only to you: the real anonymised sample report (PDF/images) is still pending from the client. Public visitors do not see this note, only the illustrative tabs below." />
+            </Reveal>
+          </Section>
+        )}
+
+        <Section variant="offwhite">
           <Reveal>
-            <ClientContentPlaceholder label="Visible only to you: the real anonymised sample report (PDF/images) is still pending from the client. Public visitors do not see this note, only the illustrative tabs below." />
+            <SampleReportTabs />
           </Reveal>
         </Section>
-      )}
-
-      <Section variant="offwhite">
-        <Reveal>
-          <SampleReportTabs />
-        </Reveal>
-      </Section>
+      </PageBodyImage>
 
       <CTABanner />
     </>

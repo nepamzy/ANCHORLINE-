@@ -26,10 +26,12 @@ export default async function AboutPage() {
           className="absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: "top" }}
         />
-        <div className="absolute inset-0 bg-linear-to-b from-paper/35 via-paper/20 to-paper/60" />
+        <div className="absolute inset-0 bg-linear-to-b from-paper/10 via-transparent to-paper/20" />
         <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">About</p>
-          <h1 className="mt-2 text-3xl font-bold text-navy-900 sm:text-4xl">{business.name}</h1>
+          <div className="inline-block max-w-2xl rounded-2xl bg-paper/90 px-6 py-5 shadow-lg backdrop-blur-sm sm:px-8 sm:py-6">
+            <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">About</p>
+            <h1 className="mt-2 text-3xl font-bold text-navy-900 sm:text-4xl">{business.name}</h1>
+          </div>
         </div>
       </div>
 

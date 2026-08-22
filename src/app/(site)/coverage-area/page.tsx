@@ -19,21 +19,22 @@ export default async function CoverageAreaPage() {
   return (
     <>
       <PageHeader eyebrow="Coverage" title="Coverage Area" bgImage="/assets/headers/coverage-area.jpg" />
-      <PageBodyImage src="/assets/body/coverage-area.jpg" alt="Coverage Area" />
 
-      <Section variant="offwhite">
-        <div className="grid gap-10 lg:grid-cols-2 items-center">
-          <Reveal className="max-w-xl space-y-4 text-slate">
-            <p className="text-lg text-navy-900 font-medium">{coverageArea.intro}</p>
-            {coverageArea.points.map((p) => (
-              <p key={p}>{p}</p>
-            ))}
-          </Reveal>
-          <Reveal delayMs={120}>
-            <AbujaMapEmbed />
-          </Reveal>
-        </div>
-      </Section>
+      <PageBodyImage src="/assets/body/coverage-area.jpg" alt="Coverage Area">
+        <Section variant="offwhite">
+          <div className="grid gap-10 lg:grid-cols-2 items-center">
+            <Reveal className="max-w-xl space-y-4 text-slate">
+              <p className="text-lg text-navy-900 font-medium">{coverageArea.intro}</p>
+              {coverageArea.points.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
+            </Reveal>
+            <Reveal delayMs={120}>
+              <AbujaMapEmbed />
+            </Reveal>
+          </div>
+        </Section>
+      </PageBodyImage>
 
       <CTABanner />
     </>

@@ -26,19 +26,19 @@ export function Hero({ heroDescription }: { heroDescription: string }) {
 
   return (
     <section className="relative overflow-hidden bg-paper">
-      {/* Full-background logo watermark, tiled across the whole section — opacity kept low
-          enough that the headline/tagline/CTAs stay easy to read without straining, per
-          instruction ("the logo should cover the whole background... user should be able
-          to see clearly without straining the main text"). */}
-      <div
+      {/* Background video, replacing the previous tiled logo watermark. A semi-transparent
+          gradient sits on top so the headline/tagline/CTAs stay easy to read. */}
+      <video
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.07]"
-        style={{
-          backgroundImage: "url(/assets/logo/anchorline-logo.png)",
-          backgroundRepeat: "repeat",
-          backgroundSize: "220px auto",
-        }}
-      />
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+      >
+        <source src="/assets/film/hero-background.mp4" type="video/mp4" />
+      </video>
+      <div className="pointer-events-none absolute inset-0 bg-paper/50" />
 
       <div className="relative mx-auto max-w-6xl px-[6vw] pt-14 pb-10 sm:pt-20 sm:pb-14">
         <p className="font-mono text-[10px] tracking-[0.4em] text-gold-600">
