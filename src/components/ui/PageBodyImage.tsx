@@ -24,7 +24,7 @@ export function PageBodyImage({
         aria-hidden
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <div className="absolute inset-0 bg-paper/80" />
+      <div className="absolute inset-0 bg-paper/45" />
       <div className="relative z-10">{children}</div>
     </div>
   );
