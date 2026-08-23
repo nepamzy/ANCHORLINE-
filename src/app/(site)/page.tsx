@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
+import { PageBodyImage } from "@/components/ui/PageBodyImage";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { Hero } from "@/components/sections/Hero";
@@ -78,23 +79,25 @@ export default async function Home() {
       </Section>
 
       {/* How it works teaser */}
-      <Section variant="offwhite">
-        <Reveal>
-          <SectionHeading
-            eyebrow="Process"
-            title="How it works"
-            description="From first enquiry to ongoing reporting, in five clear steps."
-          />
-        </Reveal>
-        <div className="mt-8">
-          <HowItWorksSteps steps={steps} limit={4} />
-        </div>
-        <div className="mt-8">
-          <Link href="/how-it-works" className="text-sm font-semibold text-navy-800 hover:text-navy-900">
-            See the full process →
-          </Link>
-        </div>
-      </Section>
+      <PageBodyImage videoSrc="/assets/film/how-it-works-body.mp4" alt="How It Works">
+        <Section variant="transparent">
+          <Reveal>
+            <SectionHeading
+              eyebrow="Process"
+              title="How it works"
+              description="From first enquiry to ongoing reporting, in five clear steps."
+            />
+          </Reveal>
+          <div className="mt-8">
+            <HowItWorksSteps steps={steps} limit={4} />
+          </div>
+          <div className="mt-8">
+            <Link href="/how-it-works" className="text-sm font-semibold text-navy-800 hover:text-navy-900">
+              See the full process →
+            </Link>
+          </div>
+        </Section>
+      </PageBodyImage>
 
       <CTABanner />
     </>

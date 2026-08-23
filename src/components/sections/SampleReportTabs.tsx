@@ -216,8 +216,8 @@ function DocumentationPanel() {
 
 function ProgressPanel() {
   return (
-    <div className="overflow-hidden rounded-card border border-line bg-paper shadow-card">
-      <table className="w-full text-left text-sm">
+    <div className="overflow-x-auto rounded-card border border-line bg-paper shadow-card">
+      <table className="w-full min-w-[560px] text-left text-sm">
         <thead className="bg-navy-50">
           <tr>
             <th scope="col" className="p-4 font-semibold text-navy-900">Area</th>

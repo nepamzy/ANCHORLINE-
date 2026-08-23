@@ -18,7 +18,7 @@ export default async function FAQPage() {
     <>
       <PageHeader eyebrow="FAQ" title="Frequently asked questions" bgImage="/assets/headers/faq.jpg" />
 
-      <PageBodyImage src="/assets/body/faq.jpg" alt="FAQ">
+      <PageBodyImage src="/assets/body/faq.png" alt="FAQ">
         <Section variant="transparent">
           <Reveal className="max-w-3xl divide-y divide-line">
             {faqItems.map((item) => (

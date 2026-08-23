@@ -25,7 +25,7 @@ export default async function ServicesPage() {
         bgImage="/assets/headers/services.jpg"
       />
 
-      <PageBodyImage src="/assets/body/services.jpg" alt="Services">
+      <PageBodyImage videoSrc="/assets/film/services-body.mp4" alt="Services">
         <Section variant="transparent">
           <div className="grid gap-8 lg:grid-cols-3">
             {tiers.map((tier, i) => (

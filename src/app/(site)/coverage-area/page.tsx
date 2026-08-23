@@ -20,7 +20,7 @@ export default async function CoverageAreaPage() {
     <>
       <PageHeader eyebrow="Coverage" title="Coverage Area" bgImage="/assets/headers/coverage-area.jpg" />
 
-      <PageBodyImage src="/assets/body/coverage-area.jpg" alt="Coverage Area">
+      <PageBodyImage videoSrc="/assets/film/coverage-area-body.mp4" alt="Coverage Area">
         <Section variant="transparent">
           <div className="grid gap-10 lg:grid-cols-2 items-center">
             <Reveal className="max-w-xl space-y-4 text-slate">

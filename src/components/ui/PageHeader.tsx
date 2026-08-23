@@ -30,7 +30,7 @@ export function PageHeader({
         <div
           className={
             bgImage
-              ? "inline-block max-w-2xl rounded-2xl bg-paper/90 px-6 py-5 shadow-lg backdrop-blur-sm sm:px-8 sm:py-6"
+              ? "inline-block max-w-[78%] rounded-2xl bg-paper/90 px-4 py-4 shadow-lg backdrop-blur-sm sm:max-w-2xl sm:px-8 sm:py-6"
               : ""
           }
         >

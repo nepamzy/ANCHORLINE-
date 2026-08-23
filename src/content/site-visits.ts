@@ -22,7 +22,6 @@ export const siteVisitPhotos = [
   { src: "/assets/site-visits/foundation-pour-2.jpg", alt: "Concrete slab poured to line", caption: "Slab poured to line", siteName, location },
   { src: "/assets/site-visits/foundation-pour-1.jpg", alt: "Blinding with the structural team", caption: "Blinding, structural team", siteName, location },
   { src: "/assets/site-visits/team-formwork.jpg", alt: "On the first floor slab with rebar cages and the site team", caption: "On the first floor slab, with the site team", siteName, location },
-  { src: "/assets/site-visits/portrait-rebar-level.jpg", alt: "On deck at rebar level, overlooking the site", caption: "On deck, rebar level", siteName, location },
   { src: "/assets/site-visits/portrait-slab-level.jpg", alt: "On site at slab level", caption: "On site, slab level", siteName, location },
   { src: "/assets/site-visits/team-group.jpg", alt: "Site inspection team on site", caption: "Site inspection team", siteName, location },
   { src: "/assets/site-visits/structural-framing.jpg", alt: "Block walls rising with scaffold up", caption: "Block walls and scaffold", siteName, location },
