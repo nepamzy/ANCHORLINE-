@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
-import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { HowItWorksScroller } from "@/components/sections/HowItWorksScroller";
 import { getHowItWorksContent } from "@/lib/content";
@@ -25,11 +24,9 @@ export default async function HowItWorksPage() {
       />
 
       <PageBodyImage videoSrc="/assets/film/how-it-works-body.mp4" alt="How It Works">
-        <Section variant="transparent">
-          <div className="max-w-2xl mx-auto">
+                  <div className="max-w-2xl mx-auto">
             <HowItWorksScroller steps={howItWorksSteps} />
           </div>
-        </Section>
       </PageBodyImage>
 
       <CTABanner />

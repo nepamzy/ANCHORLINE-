@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
-import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { ServiceTierCard } from "@/components/sections/ServiceTierExpandable";
 import { Reveal } from "@/components/motion/Reveal";
@@ -22,19 +21,17 @@ export default async function ServicesPage() {
         eyebrow="Services"
         title="Watch. Verify. Manage."
         description="Fees are tailored to project scope, location, and visit frequency. Tap a tier to see the full details."
-        bgImage="/assets/headers/services.jpg"
+        bgImage="/assets/headers/services.png"
       />
 
       <PageBodyImage videoSrc="/assets/film/services-body.mp4" alt="Services">
-        <Section variant="transparent">
-          <div className="grid gap-8 lg:grid-cols-3">
-            {tiers.map((tier, i) => (
-              <Reveal key={tier.name} delayMs={i * 90}>
-                <ServiceTierCard tier={tier} index={i} />
-              </Reveal>
-            ))}
-          </div>
-        </Section>
+        <div className="grid gap-6">
+          {tiers.map((tier, i) => (
+            <Reveal key={tier.name} delayMs={i * 90}>
+              <ServiceTierCard tier={tier} index={i} />
+            </Reveal>
+          ))}
+        </div>
       </PageBodyImage>
 
       <CTABanner />

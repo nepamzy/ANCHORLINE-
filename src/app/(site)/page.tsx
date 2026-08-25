@@ -80,7 +80,6 @@ export default async function Home() {
 
       {/* How it works teaser */}
       <PageBodyImage videoSrc="/assets/film/how-it-works-body.mp4" alt="How It Works">
-        <Section variant="transparent">
           <Reveal>
             <SectionHeading
               eyebrow="Process"
@@ -96,7 +95,6 @@ export default async function Home() {
               See the full process →
             </Link>
           </div>
-        </Section>
       </PageBodyImage>
 
       <CTABanner />

@@ -19,8 +19,8 @@ const location = "Abuja, FCT";
 export const siteVisitPhotos = [
   { src: "/assets/site-visits/excavation.jpg", alt: "Excavation and formwork laid out at the site", caption: "Groundworks: excavation and formwork", siteName, location },
   { src: "/assets/site-visits/foundation-wide.jpg", alt: "Foundation reinforcement mat, wide view", caption: "Foundation reinforcement, wide view", siteName, location },
-  { src: "/assets/site-visits/foundation-pour-2.jpg", alt: "Concrete slab poured to line", caption: "Slab poured to line", siteName, location },
   { src: "/assets/site-visits/foundation-pour-1.jpg", alt: "Blinding with the structural team", caption: "Blinding, structural team", siteName, location },
+  { src: "/assets/site-visits/foundation-pour-2.jpg", alt: "Concrete slab poured to line", caption: "Slab poured to line", siteName, location },
   { src: "/assets/site-visits/team-formwork.jpg", alt: "On the first floor slab with rebar cages and the site team", caption: "On the first floor slab, with the site team", siteName, location },
   { src: "/assets/site-visits/portrait-slab-level.jpg", alt: "On site at slab level", caption: "On site, slab level", siteName, location },
   { src: "/assets/site-visits/team-group.jpg", alt: "Site inspection team on site", caption: "Site inspection team", siteName, location },

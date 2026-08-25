@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
-import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { AbujaMapEmbed } from "@/components/sections/AbujaMapEmbed";
 import { Reveal } from "@/components/motion/Reveal";
@@ -21,8 +20,7 @@ export default async function CoverageAreaPage() {
       <PageHeader eyebrow="Coverage" title="Coverage Area" bgImage="/assets/headers/coverage-area.jpg" />
 
       <PageBodyImage videoSrc="/assets/film/coverage-area-body.mp4" alt="Coverage Area">
-        <Section variant="transparent">
-          <div className="grid gap-10 lg:grid-cols-2 items-center">
+                  <div className="grid gap-10 lg:grid-cols-2 items-center">
             <Reveal className="max-w-xl space-y-4 text-slate">
               <p className="text-lg text-navy-900 font-medium">{coverageArea.intro}</p>
               {coverageArea.points.map((p) => (
@@ -33,7 +31,6 @@ export default async function CoverageAreaPage() {
               <AbujaMapEmbed />
             </Reveal>
           </div>
-        </Section>
       </PageBodyImage>
 
       <CTABanner />

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
-import { Section } from "@/components/ui/Section";
 import { ClientContentPlaceholder } from "@/components/ui/ClientContentPlaceholder";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { SampleReportTabs } from "@/components/sections/SampleReportTabs";
@@ -29,18 +28,14 @@ export default async function SampleReportPage() {
 
       <PageBodyImage src="/assets/body/sample-report.jpg" alt="Sample Report">
         {session && (
-          <Section variant="transparent">
-            <Reveal>
+                      <Reveal>
               <ClientContentPlaceholder label="Visible only to you: the real anonymised sample report (PDF/images) is still pending from the client. Public visitors do not see this note, only the illustrative tabs below." />
             </Reveal>
-          </Section>
-        )}
+          )}
 
-        <Section variant="transparent">
-          <Reveal>
+                  <Reveal>
             <SampleReportTabs />
           </Reveal>
-        </Section>
       </PageBodyImage>
 
       <CTABanner />

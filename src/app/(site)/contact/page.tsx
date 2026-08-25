@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
-import { Section } from "@/components/ui/Section";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { Reveal } from "@/components/motion/Reveal";
 import { getContactInfo, whatsappHrefFor } from "@/lib/content";
@@ -28,8 +27,7 @@ export default async function ContactPage() {
       />
 
       <PageBodyImage src="/assets/body/contact.png" alt="Get a Quote">
-        <Section variant="transparent">
-          <div className="grid gap-12 lg:grid-cols-2">
+                  <div className="grid gap-12 lg:grid-cols-2">
             <Reveal>
               <ContactForm />
             </Reveal>
@@ -53,7 +51,6 @@ export default async function ContactPage() {
               </p>
             </Reveal>
           </div>
-        </Section>
       </PageBodyImage>
     </>
   );

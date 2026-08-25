@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
-import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { ClientContentPlaceholder } from "@/components/ui/ClientContentPlaceholder";
 import { CTABanner } from "@/components/sections/CTABanner";
@@ -26,8 +25,7 @@ export default async function TestimonialsPage() {
       />
 
       <PageBodyImage src="/assets/body/testimonials.jpg" alt="Testimonials">
-        <Section variant="transparent">
-          {items.length === 0 ? (
+                  {items.length === 0 ? (
             <Reveal>
               <ClientContentPlaceholder label="No approved client testimonials yet. This section will be populated as feedback is collected and approved. Nothing fabricated in the meantime." />
             </Reveal>
@@ -46,7 +44,6 @@ export default async function TestimonialsPage() {
               ))}
             </div>
           )}
-        </Section>
       </PageBodyImage>
 
       <CTABanner />

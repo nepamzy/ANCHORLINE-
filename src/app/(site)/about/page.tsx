@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Section } from "@/components/ui/Section";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { Reveal } from "@/components/motion/Reveal";
@@ -18,27 +17,17 @@ export default async function AboutPage() {
 
   return (
     <>
-      {/* Heading with the About header photo as a full-cover background — text sits on a
-          readable panel so it stays legible against any photo. */}
-      <div className="relative overflow-hidden border-b border-line py-20 sm:py-28">
+      {/* Full banner image only — no overlaid text panel, per instruction. */}
+      <div className="relative overflow-hidden border-b border-line">
         <img
           src="/assets/headers/about.png"
-          alt=""
-          aria-hidden
-          className="absolute inset-0 h-full w-full object-cover"
-          style={{ objectPosition: "top" }}
+          alt="About Anchorline Project Partners"
+          className="h-auto w-full object-cover"
         />
-        <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="inline-block max-w-2xl rounded-2xl bg-paper/90 px-6 py-5 shadow-lg backdrop-blur-sm sm:px-8 sm:py-6">
-            <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">About</p>
-            <h1 className="mt-2 text-3xl font-bold text-navy-900 sm:text-4xl">{business.name}</h1>
-          </div>
-        </div>
       </div>
 
       <PageBodyImage videoSrc="/assets/film/about-body.mp4" alt="About Anchorline">
-        <Section variant="transparent">
-          <div className="max-w-3xl space-y-4 text-slate">
+                  <div className="max-w-3xl space-y-4 text-slate">
             <Reveal>
               <p>{aboutContent.narrative}</p>
             </Reveal>
@@ -60,10 +49,8 @@ export default async function AboutPage() {
               </div>
             </Reveal>
           </div>
-        </Section>
 
-        <Section variant="transparent">
-          <Reveal className="max-w-3xl">
+                  <Reveal className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">
               Principal Consultant
             </p>
@@ -77,10 +64,8 @@ export default async function AboutPage() {
               ))}
             </ul>
           </Reveal>
-        </Section>
 
-        <Section variant="transparent">
-          <Reveal>
+                  <Reveal>
             <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">
               Hands-on experience
             </p>
@@ -132,7 +117,6 @@ export default async function AboutPage() {
               ))}
             </div>
           </div>
-        </Section>
       </PageBodyImage>
 
       <CTABanner />

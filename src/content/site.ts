@@ -21,6 +21,7 @@ export const business = {
 export const navigation = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
+  { label: "Why Anchorline", href: "/why-anchorline" },
   { label: "Services", href: "/services" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Sample Report", href: "/sample-report" },

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
-import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import { TierIcon } from "@/components/sections/TierIcon";
 import { CTABanner } from "@/components/sections/CTABanner";
@@ -48,11 +47,10 @@ export default async function TierDetailPage({ params }: { params: Promise<{ tie
         eyebrow="Services"
         title={`${tier.name}: Full Details`}
         description={detail.summary}
-        bgImage="/assets/headers/services.jpg"
+        bgImage="/assets/headers/services.png"
       />
 
-      <PageBodyImage videoSrc="/assets/film/services-body.mp4" alt={`${tier.name} details`}>
-        <Section variant="transparent">
+      <PageBodyImage src="/assets/body/tier-detail.png" alt={`${tier.name} details`}>
           <Link href="/services" className="text-sm font-semibold text-navy-800 hover:text-navy-900">
             ← Back to all tiers
           </Link>
@@ -106,7 +104,6 @@ export default async function TierDetailPage({ params }: { params: Promise<{ tie
               <Button href="/contact">Get a Quote for {tier.name}</Button>
             </Reveal>
           </div>
-        </Section>
       </PageBodyImage>
 
       <CTABanner />

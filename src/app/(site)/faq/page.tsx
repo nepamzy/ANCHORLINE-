@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
-import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { Reveal } from "@/components/motion/Reveal";
 import { getFAQContent } from "@/lib/content";
@@ -19,8 +18,7 @@ export default async function FAQPage() {
       <PageHeader eyebrow="FAQ" title="Frequently asked questions" bgImage="/assets/headers/faq.jpg" />
 
       <PageBodyImage src="/assets/body/faq.png" alt="FAQ">
-        <Section variant="transparent">
-          <Reveal className="max-w-3xl divide-y divide-line">
+                  <Reveal className="max-w-3xl divide-y divide-line">
             {faqItems.map((item) => (
               <details key={item.question} className="group py-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left font-semibold text-navy-900 marker:content-none">
@@ -33,7 +31,6 @@ export default async function FAQPage() {
               </details>
             ))}
           </Reveal>
-        </Section>
       </PageBodyImage>
 
       <CTABanner />

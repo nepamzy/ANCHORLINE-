@@ -1,12 +1,11 @@
 import type { ReactNode } from "react";
 
 /**
- * Wraps a page's body content with a full-cover watermark photo OR video
- * behind it. The media fills the entire section (length and width, matched
- * to however tall the content inside makes it) — not a separate block, not
- * letterboxed. The overlay is light enough to see the media clearly, but
- * strong enough that the text in front of it stays easy to read without
- * straining.
+ * Shows a page's body content beside its photo/video — text on one side,
+ * full-clarity media on the other, in their own blocks so neither
+ * encroaches on the other. Replaces the earlier translucent "watermark"
+ * treatment: the media is shown completely clear, at full brightness, not
+ * dimmed or overlaid.
  */
 export function PageBodyImage({
   src,
@@ -20,28 +19,30 @@ export function PageBodyImage({
   children: ReactNode;
 }) {
   return (
-    <div className="relative overflow-hidden">
-      {videoSrc ? (
-        <video
-          aria-hidden
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source src={videoSrc} type="video/mp4" />
-        </video>
-      ) : (
-        <img
-          src={src}
-          alt={alt}
-          aria-hidden
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
-      <div className="absolute inset-0 bg-paper/45" />
-      <div className="relative z-10">{children}</div>
-    </div>
+    <section className="bg-offwhite py-16 sm:py-20">
+      <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 sm:px-6 lg:px-8 md:grid-cols-2 md:items-center md:gap-12">
+        <div className="min-w-0">{children}</div>
+        <div className="relative min-h-[260px] w-full overflow-hidden rounded-card shadow-card sm:min-h-[340px] md:min-h-[420px]">
+          {videoSrc ? (
+            <video
+              aria-hidden
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+            >
+              <source src={videoSrc} type="video/mp4" />
+            </video>
+          ) : (
+            <img
+              src={src}
+              alt={alt}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
