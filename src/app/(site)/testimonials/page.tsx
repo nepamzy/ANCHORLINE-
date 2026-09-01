@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageBodyImage } from "@/components/ui/PageBodyImage";
 import { Card } from "@/components/ui/Card";
@@ -12,7 +13,14 @@ export const metadata: Metadata = {
   description: "Client testimonials for Anchorline Project Partners.",
 };
 
+/**
+ * Not linked from the live nav yet (no approved testimonials exist —
+ * see src/content/site.ts). Route itself stays 404 rather than being
+ * deleted, so re-enabling later is just re-adding the nav entry, not
+ * rebuilding this page or its dashboard editor.
+ */
 export default async function TestimonialsPage() {
+  notFound();
   const { items } = await getTestimonialsContent();
 
   return (

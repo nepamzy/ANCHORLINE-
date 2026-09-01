@@ -2,9 +2,10 @@
 
 import { useSectionDraft } from "../useSectionDraft";
 import { SaveBar } from "../SaveBar";
+import { MediaField } from "../MediaField";
 import type { HomeContent } from "@/lib/content";
 
-const empty: HomeContent = { heroDescription: "", positioning: [] };
+const empty: HomeContent = { heroDescription: "", positioning: [], images: { heroVideo: "" } };
 
 export default function HomeEditor() {
   const { value, setValue, loading, meta, status, error, saveDraft, publish } = useSectionDraft<HomeContent>(
@@ -25,6 +26,14 @@ export default function HomeEditor() {
       </p>
 
       <div className="mt-6 max-w-2xl space-y-8">
+        <MediaField
+          label="Homepage hero video"
+          hint="This is the only video on the whole site, the full-screen background behind the homepage headline."
+          kind="video"
+          value={value.images.heroVideo}
+          onChange={(heroVideo) => setValue({ ...value, images: { ...value.images, heroVideo } })}
+        />
+
         <div>
           <label className="text-sm font-medium text-navy-900">Hero description</label>
           <textarea

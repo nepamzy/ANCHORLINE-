@@ -25,12 +25,16 @@
   --color-gold-500: #e4a41f;
   --color-gold-100: #faecc9;
 
-  /* Neutrals */
-  --color-ink: #1a2027;
-  --color-slate: #4b5563;
-  --color-line: #e2e5ea;
-  --color-paper: #ffffff;
-  --color-offwhite: #f7f8fa;
+  /* Neutrals — warm stone tones, not stark white, so large light
+     sections don't read as an empty white page. Pure white is kept
+     only as --color-white for small surfaces (cards, form fields)
+     that genuinely need max contrast against the warm background. */
+  --color-ink: #1e1a15;
+  --color-slate: #5c5346;
+  --color-line: #e3dccc;
+  --color-paper: #f4efe4;
+  --color-offwhite: #ece4d3;
+  --color-white: #ffffff;
 
   /* Status (Sample Report progress key — Section 7.5) */
   --color-status-ontrack: #1e7a3d;
@@ -65,6 +69,7 @@
   --color-line: var(--color-line);
   --color-paper: var(--color-paper);
   --color-offwhite: var(--color-offwhite);
+  --color-white: var(--color-white);
 
   --color-status-ontrack: var(--color-status-ontrack);
   --color-status-minor: var(--color-status-minor);
@@ -74,7 +79,7 @@
   --color-foreground: var(--foreground);
 
   --font-sans: var(--font-inter);
-  --font-display: var(--font-fraunces);
+  --font-display: var(--font-display);
 
   --radius-card: var(--radius-card);
   --radius-control: var(--radius-control);

@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
-import { PageBodyImage } from "@/components/ui/PageBodyImage";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { Hero } from "@/components/sections/Hero";
-import { HomeFilm } from "@/components/sections/HomeFilm";
-import { PositioningCarousel } from "@/components/sections/PositioningCarousel";
-import { HowItWorksSteps } from "@/components/sections/HowItWorksSteps";
+import { TrustStrip } from "@/components/sections/TrustStrip";
+import { WhyAnchorlineList } from "@/components/sections/WhyAnchorlineList";
+import { HowItWorksScroller } from "@/components/sections/HowItWorksScroller";
 import { TierCard } from "@/components/sections/TierCard";
 import { Reveal } from "@/components/motion/Reveal";
 import { business } from "@/content/site";
@@ -21,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const { heroDescription, positioning } = await getHomeContent();
+  const { heroDescription, positioning, images: homeImages } = await getHomeContent();
   const { tiers } = await getServicesContent();
   const { steps } = await getHowItWorksContent();
   const { contactEmail } = await getContactInfo();
@@ -47,19 +46,12 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <Hero heroDescription={heroDescription} />
-      <HomeFilm />
+      <Hero heroDescription={heroDescription} videoSrc={homeImages.heroVideo} />
 
-      {/* Positioning carousel */}
-      <Section variant="navy">
-        <SectionHeading eyebrow="Why Anchorline" title="What makes us different" />
-        <div className="mt-8">
-          <PositioningCarousel items={positioning} />
-        </div>
-      </Section>
+      <TrustStrip />
 
       {/* Service tier snapshot */}
-      <Section variant="gold">
+      <Section variant="paper">
         <Reveal>
           <SectionHeading
             eyebrow="Service tiers"
@@ -67,7 +59,7 @@ export default async function Home() {
             description="Watch, Verify, and Manage: fees are tailored to project scope, location, and visit frequency. Tap a tier for the full details."
           />
         </Reveal>
-        <div className="mt-8 grid gap-6 sm:grid-cols-3">
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
           {tiers.map((t, i) => (
             <Reveal key={t.name} delayMs={i * 80}>
               <Link href={`/services/${t.name.toLowerCase()}`} className="block h-full">
@@ -78,24 +70,32 @@ export default async function Home() {
         </div>
       </Section>
 
-      {/* How it works teaser */}
-      <PageBodyImage videoSrc="/assets/film/how-it-works-body.mp4" alt="How It Works">
-          <Reveal>
-            <SectionHeading
-              eyebrow="Process"
-              title="How it works"
-              description="From first enquiry to ongoing reporting, in five clear steps."
-            />
-          </Reveal>
-          <div className="mt-8">
-            <HowItWorksSteps steps={steps} limit={4} />
-          </div>
-          <div className="mt-8">
-            <Link href="/how-it-works" className="text-sm font-semibold text-navy-800 hover:text-navy-900">
-              See the full process →
-            </Link>
-          </div>
-      </PageBodyImage>
+      {/* Why Anchorline — vertical editorial list, not a carousel */}
+      <Section variant="navy">
+        <SectionHeading eyebrow="Why Anchorline" title="What makes us different" invert />
+        <div className="mt-8">
+          <WhyAnchorlineList items={positioning} />
+        </div>
+      </Section>
+
+      {/* How it works teaser — text-only, scroll-lit steps, no photo */}
+      <Section variant="offwhite">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Process"
+            title="How it works"
+            description="From first enquiry to ongoing reporting, in five clear steps."
+          />
+        </Reveal>
+        <div className="mx-auto mt-10 max-w-2xl">
+          <HowItWorksScroller steps={steps} limit={4} />
+        </div>
+        <div className="mt-8 text-center">
+          <Link href="/how-it-works" className="text-sm font-semibold text-navy-800 hover:text-navy-900">
+            See the full process →
+          </Link>
+        </div>
+      </Section>
 
       <CTABanner />
     </>

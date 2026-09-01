@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Fraunces } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { siteUrl } from "@/lib/site-url";
 
@@ -9,13 +9,13 @@ const inter = Inter({
   display: "swap",
 });
 
-// Display serif for the cinematic homepage film's titles/captions only —
-// the rest of the site stays on Inter. Loaded as a variable so weight/
-// italic are picked per-use with Tailwind utilities, not fixed here.
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// Bold geometric display face for every heading site-wide — deliberately
+// not a serif, a different visual register from the site's earlier
+// design pass, used everywhere a heading needs to read as designed
+// rather than as body copy set larger.
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-display",
   subsets: ["latin"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -58,7 +58,7 @@ export const dynamic = "force-dynamic";
 // shell instead of the customer-facing nav.
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${inter.variable} ${fraunces.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-paper text-ink font-sans">{children}</body>
     </html>
   );

@@ -15,5 +15,9 @@
       "forWhom": "Developers & larger private projects",
       "includes": "Full project/construction management: contractor engagement support, contract administration, cost control, and quality supervision"
     }
-  ]
+  ],
+  "images": {
+    "headerImage": "/assets/client-photos/pexels-gulru-sude-330689650-35886617.jpg",
+    "bodyImage": "/assets/client-photos/pexels-njeromin-12314551.jpg"
+  }
 }

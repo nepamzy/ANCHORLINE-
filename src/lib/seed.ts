@@ -44,6 +44,10 @@ export async function ensureSeeded(): Promise<void> {
     seedSectionIfMissing("contact", {
       whatsappNumber: business.whatsappNumber,
       contactEmail: business.contactEmail,
+      images: {
+        headerImage: "/assets/client-photos/pexels-silverkblack-36766697.jpg",
+        bodyImage: "/assets/client-photos/pexels-gustavo-fring-6285067.jpg",
+      },
     }),
 
     seedSectionIfMissing(
@@ -56,6 +60,13 @@ export async function ensureSeeded(): Promise<void> {
       )
     ),
 
-    seedSectionIfMissing("sample-report", { filePath: null as string | null, note: "" }),
+    seedSectionIfMissing("sample-report", {
+      filePath: null as string | null,
+      note: "",
+      images: {
+        headerImage: "/assets/client-photos/pexels-kindelmedia-8488030.jpg",
+        bodyImage: "/assets/client-photos/pexels-njeromin-12314551.jpg",
+      },
+    }),
   ]);
 }

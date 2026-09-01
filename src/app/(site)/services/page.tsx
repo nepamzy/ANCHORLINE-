@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { PageBodyImage } from "@/components/ui/PageBodyImage";
+import Link from "next/link";
+import { PageHero } from "@/components/ui/PageHero";
+import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
-import { ServiceTierCard } from "@/components/sections/ServiceTierExpandable";
+import { TierCard } from "@/components/sections/TierCard";
 import { Reveal } from "@/components/motion/Reveal";
 import { getServicesContent } from "@/lib/content";
 
@@ -13,26 +14,28 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
-  const { tiers } = await getServicesContent();
+  const { tiers, images } = await getServicesContent();
 
   return (
     <>
-      <PageHeader
+      <PageHero
         eyebrow="Services"
         title="Watch. Verify. Manage."
         description="Fees are tailored to project scope, location, and visit frequency. Tap a tier to see the full details."
-        bgImage="/assets/headers/services.png"
+        bgImage={images.headerImage}
       />
 
-      <PageBodyImage videoSrc="/assets/film/services-body.mp4" alt="Services">
-        <div className="grid gap-6">
+      <Section>
+        <div className="grid gap-6 sm:grid-cols-3">
           {tiers.map((tier, i) => (
             <Reveal key={tier.name} delayMs={i * 90}>
-              <ServiceTierCard tier={tier} index={i} />
+              <Link href={`/services/${tier.name.toLowerCase()}`} className="block h-full">
+                <TierCard tier={tier} />
+              </Link>
             </Reveal>
           ))}
         </div>
-      </PageBodyImage>
+      </Section>
 
       <CTABanner />
     </>

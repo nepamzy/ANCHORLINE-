@@ -3,9 +3,10 @@
 import { useState, type ChangeEvent } from "react";
 import { useSectionDraft } from "../useSectionDraft";
 import { SaveBar } from "../SaveBar";
+import { MediaField } from "../MediaField";
 import type { SampleReportAsset } from "@/lib/content";
 
-const empty: SampleReportAsset = { filePath: null, note: "" };
+const empty: SampleReportAsset = { filePath: null, note: "", images: { headerImage: "", bodyImage: "" } };
 
 export default function SampleReportEditor() {
   const { value, setValue, loading, meta, status, error, saveDraft, publish } = useSectionDraft<SampleReportAsset>(
@@ -51,6 +52,22 @@ export default function SampleReportEditor() {
         image) once it&apos;s ready. Until then, the website shows a clearly
         labelled placeholder, nothing fabricated.
       </p>
+
+      <div className="mt-6 max-w-xl space-y-8">
+        <MediaField
+          label="Banner image (top of page)"
+          kind="image"
+          value={value.images.headerImage}
+          onChange={(headerImage) => setValue({ ...value, images: { ...value.images, headerImage } })}
+        />
+
+        <MediaField
+          label="Body photo"
+          kind="image"
+          value={value.images.bodyImage}
+          onChange={(bodyImage) => setValue({ ...value, images: { ...value.images, bodyImage } })}
+        />
+      </div>
 
       <div className="mt-6 max-w-xl space-y-4">
         <div>

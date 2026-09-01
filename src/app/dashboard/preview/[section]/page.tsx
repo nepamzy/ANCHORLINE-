@@ -12,6 +12,7 @@ import {
 } from "@/lib/content";
 import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
+import { Marker } from "@/components/ui/Marker";
 import { TierCard } from "@/components/sections/TierCard";
 import { HowItWorksSteps } from "@/components/sections/HowItWorksSteps";
 import { business } from "@/content/site";
@@ -62,9 +63,12 @@ export default async function PreviewPage({ params }: { params: Promise<{ sectio
               <p>{about.narrative}</p>
               <div>
                 <p>Our approach:</p>
-                <ul className="list-disc pl-5 space-y-1">
+                <ul className="space-y-1">
                   {about.approach.map((a) => (
-                    <li key={a}>{a}</li>
+                    <li key={a} className="flex gap-2">
+                      <Marker />
+                      <span>{a}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -73,7 +77,10 @@ export default async function PreviewPage({ params }: { params: Promise<{ sectio
                 <h2 className="mt-2 text-2xl font-bold text-navy-900">{business.principal}</h2>
                 <ul className="mt-4 space-y-2 text-slate">
                   {about.credentials.map((c) => (
-                    <li key={c}>• {c}</li>
+                    <li key={c} className="flex gap-2">
+                      <Marker />
+                      <span>{c}</span>
+                    </li>
                   ))}
                 </ul>
               </div>

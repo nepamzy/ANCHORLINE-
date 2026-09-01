@@ -3,9 +3,15 @@
 import { useSectionDraft } from "../useSectionDraft";
 import { SaveBar } from "../SaveBar";
 import { StringListEditor } from "../StringListEditor";
+import { MediaField } from "../MediaField";
 import type { AboutContent } from "@/lib/content";
 
-const empty: AboutContent = { narrative: "", approach: [], credentials: [] };
+const empty: AboutContent = {
+  narrative: "",
+  approach: [],
+  credentials: [],
+  images: { headerImage: "", bodyImage: "" },
+};
 
 export default function AboutEditor() {
   const { value, setValue, loading, meta, status, error, saveDraft, publish } = useSectionDraft<AboutContent>(
@@ -23,6 +29,20 @@ export default function AboutEditor() {
       <p className="mt-1 text-slate">Principal Consultant bio and approach shown on the About page.</p>
 
       <div className="mt-6 max-w-2xl space-y-8">
+        <MediaField
+          label="Banner image (top of page)"
+          kind="image"
+          value={value.images.headerImage}
+          onChange={(headerImage) => setValue({ ...value, images: { ...value.images, headerImage } })}
+        />
+
+        <MediaField
+          label="Body photo"
+          kind="image"
+          value={value.images.bodyImage}
+          onChange={(bodyImage) => setValue({ ...value, images: { ...value.images, bodyImage } })}
+        />
+
         <div>
           <label className="text-sm font-medium text-navy-900">About narrative</label>
           <textarea

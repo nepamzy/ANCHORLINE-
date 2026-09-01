@@ -20,5 +20,9 @@
       "question": "How do I get started?",
       "answer": "See How It Works, or reach out directly via the enquiry form or WhatsApp."
     }
-  ]
+  ],
+  "images": {
+    "headerImage": "/assets/client-photos/pexels-burst-374023.jpg",
+    "bodyImage": "/assets/client-photos/pexels-sonu-kumar-1211352235-33862076.jpg"
+  }
 }

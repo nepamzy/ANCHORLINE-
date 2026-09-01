@@ -85,30 +85,45 @@ export function ContactForm() {
         <label htmlFor="location" className="text-sm font-medium text-navy-900">
           Project location
         </label>
-        <input id="location" name="location" type="text" required className={inputClasses} />
+        <input
+          id="location"
+          name="location"
+          type="text"
+          required
+          placeholder="e.g. Abuja, Lagos, Port Harcourt..."
+          className={inputClasses}
+        />
       </div>
 
       <div>
         <label htmlFor="stage" className="text-sm font-medium text-navy-900">
           Project stage
         </label>
-        <input id="stage" name="stage" type="text" required className={inputClasses} />
+        <select id="stage" name="stage" required className={inputClasses} defaultValue="">
+          <option value="" disabled>
+            Select one
+          </option>
+          <option>Pre-construction / land acquired</option>
+          <option>Foundation</option>
+          <option>Superstructure</option>
+          <option>Roofing</option>
+          <option>Finishing</option>
+          <option>Already have a contractor, want oversight</option>
+          <option>Bought a unit from a developer</option>
+        </select>
       </div>
 
       <div>
         <label htmlFor="tier" className="text-sm font-medium text-navy-900">
           Tier of interest
         </label>
-        <select id="tier" name="tier" required className={inputClasses} defaultValue="">
-          <option value="" disabled>
-            Select a tier
-          </option>
+        <select id="tier" name="tier" className={inputClasses} defaultValue="Not sure yet">
+          <option value="Not sure yet">Not sure yet</option>
           {tierNames.map((name) => (
             <option key={name} value={name}>
               {name}
             </option>
           ))}
-          <option value="Not sure yet">Not sure yet</option>
         </select>
       </div>
 
@@ -116,7 +131,14 @@ export function ContactForm() {
         <label htmlFor="message" className="text-sm font-medium text-navy-900">
           Message
         </label>
-        <textarea id="message" name="message" rows={4} required className={inputClasses} />
+        <textarea
+          id="message"
+          name="message"
+          rows={4}
+          required
+          placeholder="Tell us a bit about your project..."
+          className={inputClasses}
+        />
       </div>
 
       <button
@@ -124,7 +146,7 @@ export function ContactForm() {
         disabled={status === "submitting"}
         className="inline-flex items-center justify-center gap-2 rounded-control px-6 py-3 text-sm font-semibold min-h-11 bg-navy-900 text-white hover:bg-navy-800 disabled:opacity-60"
       >
-        {status === "submitting" ? "Sending…" : "Send enquiry"}
+        {status === "submitting" ? "Sending…" : "Send Enquiry"}
       </button>
     </form>
   );

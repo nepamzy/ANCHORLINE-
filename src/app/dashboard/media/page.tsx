@@ -1,20 +1,18 @@
-import { list } from "@vercel/blob";
+import { hasR2Credentials, listObjects } from "@/lib/r2";
 import { MediaUploader } from "./MediaUploader";
 
 /**
- * Lists uploaded media from Vercel Blob (see src/app/api/dashboard/upload/route.ts —
+ * Lists uploaded media from R2 (see src/app/api/dashboard/upload/route.ts —
  * uploads no longer land on the local filesystem, which doesn't
  * persist on Vercel's serverless functions).
  */
 async function listMedia(): Promise<string[]> {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return [];
+  if (!hasR2Credentials()) return [];
   try {
-    const { blobs } = await list({ prefix: "media/" });
-    return blobs
-      .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime())
-      .map((b) => b.url);
+    const objects = await listObjects("media/");
+    return objects.map((o) => o.url);
   } catch (err) {
-    console.error("[media] Blob list failed:", err);
+    console.error("[media] R2 list failed:", err);
     return [];
   }
 }

@@ -27,7 +27,10 @@ export const navigation = [
   { label: "Sample Report", href: "/sample-report" },
   { label: "Coverage Area", href: "/coverage-area" },
   { label: "FAQ", href: "/faq" },
-  { label: "Testimonials", href: "/testimonials" },
+  // Testimonials intentionally not in the live nav yet — no approved
+  // testimonials exist. Re-add this entry when the client has some
+  // (the /testimonials route and its dashboard editor are still there,
+  // just unlinked — see src/app/(site)/testimonials/page.tsx).
 ] as const;
 
 export const contactNav = { label: "Contact / Get a Quote", href: "/contact" };
@@ -36,6 +39,33 @@ export const trustPillars = [
   "Independent",
   "Transparent",
   "Technically Qualified",
+] as const;
+
+// Short rotating lines for the homepage hero video. Each restates a fact
+// already established elsewhere on the site (tagline, positioning items,
+// About credentials, service tiers) in a single short sentence, not new
+// marketing copy.
+export const heroRotatingLines = [
+  "Your eyes on the ground, wherever you are.",
+  "Independent oversight, reporting only to you.",
+  "Every visit documented with dated photos and video.",
+  "Led by a practicing construction project manager.",
+  "Reports delivered by WhatsApp or email, wherever you are.",
+  "Abuja based, with coverage arranged nationwide.",
+  "Every engagement runs on a signed letter.",
+  "Site verification, quantity surveying, and project management.",
+  "Watch, Verify, or Manage. The choice is yours.",
+  "Built for diaspora clients building from abroad.",
+] as const;
+
+// Headline facts already established elsewhere in the brief (About's
+// "over half a decade" credential, the three WATCH/VERIFY/MANAGE tiers,
+// the "reporting to you and only you" independence framing) — restated
+// as a compact stats row, not new claims.
+export const heroStats = [
+  { value: "5+", label: "Years hands-on construction project management experience" },
+  { value: "3", label: "Tiers of oversight, Watch, Verify, Manage" },
+  { value: "1", label: "Party you report to: you, and only you" },
 ] as const;
 
 export const sampleReportSections = [

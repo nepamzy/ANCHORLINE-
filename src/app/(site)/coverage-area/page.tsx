@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { PageBodyImage } from "@/components/ui/PageBodyImage";
+import { PageHero } from "@/components/ui/PageHero";
+import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { AbujaMapEmbed } from "@/components/sections/AbujaMapEmbed";
 import { Reveal } from "@/components/motion/Reveal";
@@ -17,21 +17,26 @@ export default async function CoverageAreaPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Coverage" title="Coverage Area" bgImage="/assets/headers/coverage-area.jpg" />
+      <PageHero eyebrow="Coverage" title="Coverage Area" bgImage={coverageArea.images.headerImage} />
 
-      <PageBodyImage videoSrc="/assets/film/coverage-area-body.mp4" alt="Coverage Area">
-                  <div className="grid gap-10 lg:grid-cols-2 items-center">
-            <Reveal className="max-w-xl space-y-4 text-slate">
-              <p className="text-lg text-navy-900 font-medium">{coverageArea.intro}</p>
+      <Section>
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
+          <Reveal delayMs={120} className="order-2 overflow-hidden rounded-card border border-line shadow-card lg:order-1">
+            <AbujaMapEmbed />
+          </Reveal>
+
+          <Reveal className="order-1 space-y-4 lg:order-2">
+            <div className="rounded-card border-l-4 border-gold-500 bg-gold-100/50 p-5">
+              <p className="text-lg font-medium text-navy-900">{coverageArea.intro}</p>
+            </div>
+            <div className="space-y-4 text-slate">
               {coverageArea.points.map((p) => (
                 <p key={p}>{p}</p>
               ))}
-            </Reveal>
-            <Reveal delayMs={120}>
-              <AbujaMapEmbed />
-            </Reveal>
-          </div>
-      </PageBodyImage>
+            </div>
+          </Reveal>
+        </div>
+      </Section>
 
       <CTABanner />
     </>

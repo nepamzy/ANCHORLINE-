@@ -40,9 +40,14 @@ yarn-error.log*
 # local CMS database (dev only — see docs/handoff for production storage notes)
 /data/*.db
 /data/*.db-*
+/data/content.json
 /public/uploads/*
 !/public/uploads/.gitkeep
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local Claude Code skill tooling (installed via ui-ux-pro-max-cli) —
+# personal AI-assistant config, not part of this site's application code.
+/.claude/

@@ -10,5 +10,9 @@
     "MSc, Construction Management, Nile University",
     "Construction Management Specialisation, Columbia University",
     "Practicing Project Manager, currently overseeing luxury residential and mixed-use developments"
-  ]
+  ],
+  "images": {
+    "headerImage": "/assets/client-photos/pexels-shox-33628382.jpg",
+    "bodyImage": "/assets/client-photos/pexels-mahmutyilmaz-35300835.jpg"
+  }
 }

@@ -11,10 +11,11 @@ import type { HowItWorksStep } from "@/lib/content";
  * the step content itself never depends on the animation to be
  * understood.
  */
-export function HowItWorksScroller({ steps }: { steps: HowItWorksStep[] }) {
+export function HowItWorksScroller({ steps, limit }: { steps: HowItWorksStep[]; limit?: number }) {
+  const shown = limit ? steps.slice(0, limit) : steps;
   const reducedMotion = usePrefersReducedMotion();
   const [observedCount, setActiveCount] = useState(0);
-  const activeCount = reducedMotion ? steps.length : observedCount;
+  const activeCount = reducedMotion ? shown.length : observedCount;
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
 
   useEffect(() => {
@@ -34,9 +35,9 @@ export function HowItWorksScroller({ steps }: { steps: HowItWorksStep[] }) {
 
     itemRefs.current.forEach((node) => node && observer.observe(node));
     return () => observer.disconnect();
-  }, [reducedMotion, steps.length]);
+  }, [reducedMotion, shown.length]);
 
-  const fillPercent = steps.length > 1 ? ((activeCount - 1) / (steps.length - 1)) * 100 : 100;
+  const fillPercent = shown.length > 1 ? ((activeCount - 1) / (shown.length - 1)) * 100 : 100;
 
   return (
     <ol className="relative">
@@ -48,7 +49,7 @@ export function HowItWorksScroller({ steps }: { steps: HowItWorksStep[] }) {
       </div>
 
       <div className="space-y-6">
-        {steps.map((s, i) => {
+        {shown.map((s, i) => {
           const active = i < activeCount;
           return (
             <li
@@ -68,7 +69,7 @@ export function HowItWorksScroller({ steps }: { steps: HowItWorksStep[] }) {
               </span>
               <div
                 className={`flex-1 rounded-card border p-6 transition-all duration-500 ${
-                  active ? "border-line bg-paper opacity-100" : "border-line/60 bg-paper opacity-60"
+                  active ? "border-line bg-white opacity-100" : "border-line/60 bg-white opacity-60"
                 }`}
               >
                 <p className="text-lg font-semibold text-navy-900">{s.title}</p>

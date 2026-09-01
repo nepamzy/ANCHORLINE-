@@ -1,41 +1,60 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import fs from "node:fs";
+import path from "node:path";
 
 /**
- * Persistent storage for the client CMS: Supabase Postgres.
+ * Persistent storage for the client CMS: Cloudflare D1 (SQLite at the
+ * edge), queried over Cloudflare's HTTP API.
  *
- * Replaces the earlier node:sqlite implementation. That approach only
- * works on a host with a persistent, writable local filesystem —
- * Vercel's serverless functions don't provide one, so an on-disk
- * SQLite file would not reliably survive between invocations (see
- * git history / handoff for the original design and its documented
- * limitation). This module keeps the exact same shape (one row per
- * content section, holding both the current draft and the currently
- * published/live version) on a real, always-on Postgres database
- * instead, so nothing above this file (src/lib/content.ts,
- * src/lib/seed.ts, the dashboard/API routes) needs to know storage
- * changed beyond awaiting these functions, which are now async.
+ * D1 has no direct "connect from a Vercel serverless function" driver
+ * the way Postgres does — it's queried over plain HTTPS
+ * (`POST /accounts/{account}/d1/database/{db}/query`), authenticated
+ * with a scoped Cloudflare API token (D1:Edit). That's what this module
+ * does: no new npm dependency, just fetch().
  *
  * Only ever called server-side (Server Components, Route Handlers —
- * never imported into "use client" files). Uses the Supabase
- * service_role key, which bypasses Row Level Security by design.
- * `content_sections` has RLS enabled with zero policies (see the
- * migration), so it's unreachable via the public/anon key even if
- * this module were ever mistakenly imported into client code.
+ * never imported into "use client" files). The API token has D1-only
+ * scope, nothing broader.
+ *
+ * Dev-only fallback: without CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN
+ * / CLOUDFLARE_D1_DATABASE_ID (e.g. local development, or before those
+ * are pasted into Vercel), every function below reads/writes a local
+ * JSON file (data/content.json, gitignored) instead of throwing. Same
+ * row shape, so nothing above this module changes either way. This path
+ * is never reached once the real Cloudflare credentials are set — it
+ * has no effect on production.
  */
 
-let client: SupabaseClient | null = null;
+function hasD1Credentials(): boolean {
+  return Boolean(
+    process.env.CLOUDFLARE_ACCOUNT_ID &&
+      process.env.CLOUDFLARE_API_TOKEN &&
+      process.env.CLOUDFLARE_D1_DATABASE_ID
+  );
+}
 
-function getClient(): SupabaseClient {
-  if (client) return client;
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error(
-      "SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are not set. See .env.example."
-    );
+async function d1Query<T = unknown>(sql: string, params: unknown[] = []): Promise<T[]> {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID;
+  const token = process.env.CLOUDFLARE_API_TOKEN;
+
+  const res = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ sql, params }),
+    }
+  );
+
+  const body = await res.json();
+  if (!res.ok || !body.success) {
+    const message = body.errors?.[0]?.message ?? `HTTP ${res.status}`;
+    throw new Error(`[db] D1 query failed: ${message}`);
   }
-  client = createClient(url, key, { auth: { persistSession: false } });
-  return client;
+  return (body.result?.[0]?.results ?? []) as T[];
 }
 
 type Row = {
@@ -46,28 +65,74 @@ type Row = {
   published_at: string | null;
 };
 
+type D1Row = {
+  key: string;
+  draft_json: string;
+  published_json: string;
+  updated_at: string;
+  published_at: string | null;
+};
+
+function parseD1Row(row: D1Row): Row {
+  return {
+    key: row.key,
+    draft_json: JSON.parse(row.draft_json),
+    published_json: JSON.parse(row.published_json),
+    updated_at: row.updated_at,
+    published_at: row.published_at,
+  };
+}
+
+// --- Dev-only local JSON file store -------------------------------------
+
+const LOCAL_DB_FILE = path.join(process.cwd(), "data", "content.json");
+
+function readLocalStore(): Record<string, Row> {
+  try {
+    const raw = fs.readFileSync(LOCAL_DB_FILE, "utf-8");
+    return JSON.parse(raw) as Record<string, Row>;
+  } catch {
+    return {};
+  }
+}
+
+function writeLocalStore(store: Record<string, Row>): void {
+  fs.mkdirSync(path.dirname(LOCAL_DB_FILE), { recursive: true });
+  fs.writeFileSync(LOCAL_DB_FILE, JSON.stringify(store, null, 2), "utf-8");
+}
+
+function getRowLocal(key: string): Row | null {
+  return readLocalStore()[key] ?? null;
+}
+
+// --- Row access, D1 or local depending on configured credentials --------
+
 async function getRow(key: string): Promise<Row | null> {
-  const { data, error } = await getClient()
-    .from("content_sections")
-    .select("*")
-    .eq("key", key)
-    .maybeSingle();
-  if (error) throw new Error(`[db] getRow(${key}) failed: ${error.message}`);
-  return (data as Row | null) ?? null;
+  if (!hasD1Credentials()) return getRowLocal(key);
+  const rows = await d1Query<D1Row>("SELECT * FROM content_sections WHERE key = ?", [key]);
+  return rows[0] ? parseD1Row(rows[0]) : null;
 }
 
 export async function seedSectionIfMissing(key: string, initial: unknown): Promise<void> {
-  // Idempotent via upsert + ignoreDuplicates, so concurrent cold
-  // starts across serverless invocations can't race/duplicate a row
-  // (there's no shared in-process "already seeded" flag to rely on
-  // the way there was with the old single-process SQLite version).
-  const { error } = await getClient()
-    .from("content_sections")
-    .upsert(
-      { key, draft_json: initial, published_json: initial },
-      { onConflict: "key", ignoreDuplicates: true }
-    );
-  if (error) throw new Error(`[db] seedSectionIfMissing(${key}) failed: ${error.message}`);
+  if (!hasD1Credentials()) {
+    const store = readLocalStore();
+    if (!store[key]) {
+      const nowIso = new Date().toISOString();
+      store[key] = { key, draft_json: initial, published_json: initial, updated_at: nowIso, published_at: null };
+      writeLocalStore(store);
+    }
+    return;
+  }
+  const nowIso = new Date().toISOString();
+  const json = JSON.stringify(initial);
+  // INSERT ... ON CONFLICT DO NOTHING is idempotent, so concurrent cold
+  // starts across serverless invocations can't race/duplicate a row.
+  await d1Query(
+    `INSERT INTO content_sections (key, draft_json, published_json, updated_at, published_at)
+     VALUES (?, ?, ?, ?, NULL)
+     ON CONFLICT(key) DO NOTHING`,
+    [key, json, json, nowIso]
+  );
 }
 
 export async function getPublished<T>(key: string, fallback: T): Promise<T> {
@@ -83,30 +148,41 @@ export async function getDraft<T>(key: string, fallback: T): Promise<T> {
 }
 
 export async function saveDraft(key: string, value: unknown): Promise<void> {
-  const existing = await getRow(key);
   const nowIso = new Date().toISOString();
-  if (existing) {
-    const { error } = await getClient()
-      .from("content_sections")
-      .update({ draft_json: value, updated_at: nowIso })
-      .eq("key", key);
-    if (error) throw new Error(`[db] saveDraft(${key}) update failed: ${error.message}`);
-  } else {
-    const { error } = await getClient()
-      .from("content_sections")
-      .insert({ key, draft_json: value, published_json: value, updated_at: nowIso, published_at: null });
-    if (error) throw new Error(`[db] saveDraft(${key}) insert failed: ${error.message}`);
+  if (!hasD1Credentials()) {
+    const store = readLocalStore();
+    const existing = store[key];
+    store[key] = existing
+      ? { ...existing, draft_json: value, updated_at: nowIso }
+      : { key, draft_json: value, published_json: value, updated_at: nowIso, published_at: null };
+    writeLocalStore(store);
+    return;
   }
+  const json = JSON.stringify(value);
+  await d1Query(
+    `INSERT INTO content_sections (key, draft_json, published_json, updated_at, published_at)
+     VALUES (?, ?, ?, ?, NULL)
+     ON CONFLICT(key) DO UPDATE SET draft_json = excluded.draft_json, updated_at = excluded.updated_at`,
+    [key, json, json, nowIso]
+  );
 }
 
 export async function publishSection(key: string): Promise<void> {
+  if (!hasD1Credentials()) {
+    const store = readLocalStore();
+    const row = store[key];
+    if (!row) throw new Error(`Cannot publish unknown section: ${key}`);
+    row.published_json = row.draft_json;
+    row.published_at = new Date().toISOString();
+    writeLocalStore(store);
+    return;
+  }
   const row = await getRow(key);
   if (!row) throw new Error(`Cannot publish unknown section: ${key}`);
-  const { error } = await getClient()
-    .from("content_sections")
-    .update({ published_json: row.draft_json, published_at: new Date().toISOString() })
-    .eq("key", key);
-  if (error) throw new Error(`[db] publishSection(${key}) failed: ${error.message}`);
+  await d1Query(
+    `UPDATE content_sections SET published_json = draft_json, published_at = ? WHERE key = ?`,
+    [new Date().toISOString(), key]
+  );
 }
 
 export async function getSectionMeta(
@@ -117,9 +193,6 @@ export async function getSectionMeta(
   return {
     updatedAt: row.updated_at,
     publishedAt: row.published_at,
-    // draft_json/published_json come back as already-parsed JS values
-    // (jsonb, not raw TEXT like the old SQLite columns), so compare
-    // by re-stringifying rather than a raw string comparison.
     hasUnpublishedChanges: JSON.stringify(row.draft_json) !== JSON.stringify(row.published_json),
   };
 }

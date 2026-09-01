@@ -2,9 +2,10 @@
 
 import { useSectionDraft } from "../useSectionDraft";
 import { SaveBar } from "../SaveBar";
+import { MediaField } from "../MediaField";
 import type { ContactInfo } from "@/lib/content";
 
-const empty: ContactInfo = { whatsappNumber: "", contactEmail: "" };
+const empty: ContactInfo = { whatsappNumber: "", contactEmail: "", images: { headerImage: "", bodyImage: "" } };
 
 export default function ContactEditor() {
   const { value, setValue, loading, meta, status, error, saveDraft, publish } = useSectionDraft<ContactInfo>(
@@ -25,6 +26,22 @@ export default function ContactEditor() {
         WhatsApp number should include the country code with no spaces
         for the click-to-chat link to work (e.g. 2348067570941 style
         digits).
+      </div>
+
+      <div className="mt-6 max-w-md space-y-8">
+        <MediaField
+          label="Banner image (top of page)"
+          kind="image"
+          value={value.images.headerImage}
+          onChange={(headerImage) => setValue({ ...value, images: { ...value.images, headerImage } })}
+        />
+
+        <MediaField
+          label="Body photo"
+          kind="image"
+          value={value.images.bodyImage}
+          onChange={(bodyImage) => setValue({ ...value, images: { ...value.images, bodyImage } })}
+        />
       </div>
 
       <div className="mt-6 max-w-md space-y-4">

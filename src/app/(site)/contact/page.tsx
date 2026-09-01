@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { PageBodyImage } from "@/components/ui/PageBodyImage";
+import { PageHero } from "@/components/ui/PageHero";
+import { Section } from "@/components/ui/Section";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { Reveal } from "@/components/motion/Reveal";
 import { getContactInfo, whatsappHrefFor } from "@/lib/content";
@@ -15,43 +15,54 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const { whatsappNumber, contactEmail } = await getContactInfo();
+  const { whatsappNumber, contactEmail, images } = await getContactInfo();
 
   return (
     <>
-      <PageHeader
+      <PageHero
         eyebrow="Ready to get started?"
         title="Get a Quote"
         description="Tell us about your project. We'll confirm the right tier and visit cadence on a short scoping call."
-        bgImage="/assets/headers/contact.jpg"
+        bgImage={images.headerImage}
       />
 
-      <PageBodyImage src="/assets/body/contact.png" alt="Get a Quote">
-                  <div className="grid gap-12 lg:grid-cols-2">
-            <Reveal>
-              <ContactForm />
-            </Reveal>
+      <Section>
+        <div className="overflow-hidden rounded-card border border-line shadow-card lg:grid lg:grid-cols-[1.2fr_1fr]">
+          <Reveal className="bg-paper p-6 sm:p-10">
+            <ContactForm />
+          </Reveal>
 
-            <Reveal delayMs={100} className="rounded-card border border-line bg-offwhite p-6">
-              <p className="text-lg font-semibold text-navy-900">Prefer WhatsApp?</p>
-              <p className="mt-2 text-slate">
+          <Reveal delayMs={100} className="relative flex flex-col justify-between bg-navy-950 p-6 text-white sm:p-10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={images.bodyImage}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover object-top opacity-15"
+            />
+            <div className="relative">
+              <p className="text-lg font-semibold text-white">Prefer WhatsApp?</p>
+              <p className="mt-2 text-white/70">
                 Message us directly. WhatsApp is an equally weighted way to
                 reach us.
               </p>
               <div className="mt-4">
                 <WhatsAppButton href={whatsappHrefFor(whatsappNumber)} number={whatsappNumber} />
               </div>
-              <p className="mt-2 text-sm text-slate">{whatsappNumber}</p>
+              <p className="mt-2 text-sm text-white/60">{whatsappNumber}</p>
+            </div>
 
-              <p className="mt-6 text-lg font-semibold text-navy-900">Email</p>
-              <p className="mt-2 text-slate">
-                <a href={`mailto:${contactEmail}`} className="underline">
+            <div className="relative mt-8 border-t border-white/15 pt-6">
+              <p className="text-lg font-semibold text-white">Email</p>
+              <p className="mt-2">
+                <a href={`mailto:${contactEmail}`} className="text-white/80 underline hover:text-white">
                   {contactEmail}
                 </a>
               </p>
-            </Reveal>
-          </div>
-      </PageBodyImage>
+            </div>
+          </Reveal>
+        </div>
+      </Section>
     </>
   );
 }

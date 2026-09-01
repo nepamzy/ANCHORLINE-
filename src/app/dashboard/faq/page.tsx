@@ -2,9 +2,10 @@
 
 import { useSectionDraft } from "../useSectionDraft";
 import { SaveBar } from "../SaveBar";
-import type { FAQItem } from "@/lib/content";
+import { MediaField } from "../MediaField";
+import type { FAQContent, FAQItem } from "@/lib/content";
 
-const empty: { items: FAQItem[] } = { items: [] };
+const empty: FAQContent = { items: [], images: { headerImage: "", bodyImage: "" } };
 
 export default function FAQEditor() {
   const { value, setValue, loading, meta, status, error, saveDraft, publish } = useSectionDraft(
@@ -17,15 +18,15 @@ export default function FAQEditor() {
   function updateItem(i: number, patch: Partial<FAQItem>) {
     const items = [...value.items];
     items[i] = { ...items[i], ...patch };
-    setValue({ items });
+    setValue({ ...value, items });
   }
 
   function removeItem(i: number) {
-    setValue({ items: value.items.filter((_, idx) => idx !== i) });
+    setValue({ ...value, items: value.items.filter((_, idx) => idx !== i) });
   }
 
   function addItem() {
-    setValue({ items: [...value.items, { question: "", answer: "" }] });
+    setValue({ ...value, items: [...value.items, { question: "", answer: "" }] });
   }
 
   return (
@@ -34,6 +35,22 @@ export default function FAQEditor() {
 
       <h1 className="text-2xl font-bold text-navy-900">FAQ</h1>
       <p className="mt-1 text-slate">Add, edit, or remove frequently asked questions.</p>
+
+      <div className="mt-6 max-w-2xl space-y-8">
+        <MediaField
+          label="Banner image (top of page)"
+          kind="image"
+          value={value.images.headerImage}
+          onChange={(headerImage) => setValue({ ...value, images: { ...value.images, headerImage } })}
+        />
+
+        <MediaField
+          label="Body photo"
+          kind="image"
+          value={value.images.bodyImage}
+          onChange={(bodyImage) => setValue({ ...value, images: { ...value.images, bodyImage } })}
+        />
+      </div>
 
       <div className="mt-6 max-w-2xl space-y-4">
         {value.items.map((item, i) => (

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { PageBodyImage } from "@/components/ui/PageBodyImage";
+import { PageHero } from "@/components/ui/PageHero";
+import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { HowItWorksScroller } from "@/components/sections/HowItWorksScroller";
 import { getHowItWorksContent } from "@/lib/content";
@@ -16,18 +16,18 @@ export default async function HowItWorksPage() {
 
   return (
     <>
-      <PageHeader
+      <PageHero
         eyebrow="Process"
         title="How it works"
         description="Five steps from first enquiry to ongoing reporting."
-        bgImage="/assets/headers/how-it-works.jpg"
+        bgImage="/assets/client-photos/pexels-lwhphoto-18153132.jpg"
       />
 
-      <PageBodyImage videoSrc="/assets/film/how-it-works-body.mp4" alt="How It Works">
-                  <div className="max-w-2xl mx-auto">
-            <HowItWorksScroller steps={howItWorksSteps} />
-          </div>
-      </PageBodyImage>
+      <Section>
+        <div className="mx-auto max-w-2xl">
+          <HowItWorksScroller steps={howItWorksSteps} />
+        </div>
+      </Section>
 
       <CTABanner />
     </>

@@ -177,7 +177,7 @@ function DocumentationPanel() {
                 <p className="text-xs font-semibold tracking-wide text-gold-600 uppercase">
                   {openArea}
                   {openPhotos.length > 1 &&
-                    ` — ${photoIndex + 1} / ${openPhotos.length}`}
+                    ` (${photoIndex + 1} / ${openPhotos.length})`}
                 </p>
                 <button
                   type="button"

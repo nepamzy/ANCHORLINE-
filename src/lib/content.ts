@@ -19,8 +19,12 @@ function readJSON<T>(file: string): T {
   return JSON.parse(raw) as T;
 }
 
+/** Shared shape for a page's editable header/body photo. */
+export type PageImages = { headerImage: string; bodyImage: string };
+
 export type PositioningItem = { title: string; body: string };
-export type HomeContent = { heroDescription: string; positioning: PositioningItem[] };
+export type HomeImages = { heroVideo: string };
+export type HomeContent = { heroDescription: string; positioning: PositioningItem[]; images: HomeImages };
 export async function getHomeContent(): Promise<HomeContent> {
   await ensureSeeded();
   return await getPublished("home", readJSON<HomeContent>("home.json"));
@@ -30,7 +34,12 @@ export async function getHomeDraft(): Promise<HomeContent> {
   return await getDraft("home", readJSON<HomeContent>("home.json"));
 }
 
-export type AboutContent = { narrative: string; approach: string[]; credentials: string[] };
+export type AboutContent = {
+  narrative: string;
+  approach: string[];
+  credentials: string[];
+  images: PageImages;
+};
 export async function getAboutContent(): Promise<AboutContent> {
   await ensureSeeded();
   return await getPublished("about", readJSON<AboutContent>("about.json"));
@@ -45,26 +54,28 @@ export type Tier = {
   forWhom: string;
   includes: string;
 };
-export async function getServicesContent(): Promise<{ tiers: Tier[] }> {
+export type ServicesContent = { tiers: Tier[]; images: PageImages };
+export async function getServicesContent(): Promise<ServicesContent> {
   await ensureSeeded();
-  return await getPublished("services", readJSON<{ tiers: Tier[] }>("services.json"));
+  return await getPublished("services", readJSON<ServicesContent>("services.json"));
 }
-export async function getServicesDraft(): Promise<{ tiers: Tier[] }> {
+export async function getServicesDraft(): Promise<ServicesContent> {
   await ensureSeeded();
-  return await getDraft("services", readJSON<{ tiers: Tier[] }>("services.json"));
+  return await getDraft("services", readJSON<ServicesContent>("services.json"));
 }
 
 export type HowItWorksStep = { step: number; title: string; body: string };
-export async function getHowItWorksContent(): Promise<{ steps: HowItWorksStep[] }> {
+export type HowItWorksContent = { steps: HowItWorksStep[]; images: PageImages };
+export async function getHowItWorksContent(): Promise<HowItWorksContent> {
   await ensureSeeded();
-  return await getPublished("how-it-works", readJSON<{ steps: HowItWorksStep[] }>("how-it-works.json"));
+  return await getPublished("how-it-works", readJSON<HowItWorksContent>("how-it-works.json"));
 }
-export async function getHowItWorksDraft(): Promise<{ steps: HowItWorksStep[] }> {
+export async function getHowItWorksDraft(): Promise<HowItWorksContent> {
   await ensureSeeded();
-  return await getDraft("how-it-works", readJSON<{ steps: HowItWorksStep[] }>("how-it-works.json"));
+  return await getDraft("how-it-works", readJSON<HowItWorksContent>("how-it-works.json"));
 }
 
-export type CoverageAreaContent = { intro: string; points: string[] };
+export type CoverageAreaContent = { intro: string; points: string[]; images: PageImages };
 export async function getCoverageAreaContent(): Promise<CoverageAreaContent> {
   await ensureSeeded();
   return await getPublished("coverage-area", readJSON<CoverageAreaContent>("coverage-area.json"));
@@ -75,13 +86,14 @@ export async function getCoverageAreaDraft(): Promise<CoverageAreaContent> {
 }
 
 export type FAQItem = { question: string; answer: string };
-export async function getFAQContent(): Promise<{ items: FAQItem[] }> {
+export type FAQContent = { items: FAQItem[]; images: PageImages };
+export async function getFAQContent(): Promise<FAQContent> {
   await ensureSeeded();
-  return await getPublished("faq", readJSON<{ items: FAQItem[] }>("faq.json"));
+  return await getPublished("faq", readJSON<FAQContent>("faq.json"));
 }
-export async function getFAQDraft(): Promise<{ items: FAQItem[] }> {
+export async function getFAQDraft(): Promise<FAQContent> {
   await ensureSeeded();
-  return await getDraft("faq", readJSON<{ items: FAQItem[] }>("faq.json"));
+  return await getDraft("faq", readJSON<FAQContent>("faq.json"));
 }
 
 export type Testimonial = { quote: string; name: string; role?: string };
@@ -94,14 +106,19 @@ export async function getTestimonialsDraft(): Promise<{ items: Testimonial[] }> 
   return await getDraft("testimonials", readJSON<{ items: Testimonial[] }>("testimonials.json"));
 }
 
-export type ContactInfo = { whatsappNumber: string; contactEmail: string };
+export type ContactInfo = { whatsappNumber: string; contactEmail: string; images: PageImages };
+const emptyContactInfo: ContactInfo = {
+  whatsappNumber: "",
+  contactEmail: "",
+  images: { headerImage: "", bodyImage: "" },
+};
 export async function getContactInfo(): Promise<ContactInfo> {
   await ensureSeeded();
-  return await getPublished("contact", { whatsappNumber: "", contactEmail: "" });
+  return await getPublished("contact", emptyContactInfo);
 }
 export async function getContactInfoDraft(): Promise<ContactInfo> {
   await ensureSeeded();
-  return await getDraft("contact", { whatsappNumber: "", contactEmail: "" });
+  return await getDraft("contact", emptyContactInfo);
 }
 
 /**
@@ -135,12 +152,17 @@ export async function getSeoDraft(): Promise<SeoMap> {
   return await getDraft("seo", {});
 }
 
-export type SampleReportAsset = { filePath: string | null; note: string };
+export type SampleReportAsset = { filePath: string | null; note: string; images: PageImages };
+const emptySampleReportAsset: SampleReportAsset = {
+  filePath: null,
+  note: "",
+  images: { headerImage: "", bodyImage: "" },
+};
 export async function getSampleReportAsset(): Promise<SampleReportAsset> {
   await ensureSeeded();
-  return await getPublished("sample-report", { filePath: null, note: "" });
+  return await getPublished("sample-report", emptySampleReportAsset);
 }
 export async function getSampleReportAssetDraft(): Promise<SampleReportAsset> {
   await ensureSeeded();
-  return await getDraft("sample-report", { filePath: null, note: "" });
+  return await getDraft("sample-report", emptySampleReportAsset);
 }

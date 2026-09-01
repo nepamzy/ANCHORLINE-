@@ -5,5 +5,9 @@
     { "step": 3, "title": "Engagement letter", "body": "A clear written agreement is signed before work begins, covering scope, fees, and reporting schedule." },
     { "step": 4, "title": "First visit & report", "body": "Dated photo/video documentation with a written summary, delivered within days." },
     { "step": 5, "title": "Ongoing cadence", "body": "Regular visits and reports on the agreed schedule, with milestone certification for Verify/Manage clients." }
-  ]
+  ],
+  "images": {
+    "headerImage": "/assets/client-photos/pexels-kindelmedia-8488030.jpg",
+    "bodyImage": "/assets/client-photos/pexels-tomas-249159243-12453932.jpg"
+  }
 }

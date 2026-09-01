@@ -10,11 +10,10 @@ const LONG_PRESS_MS = 5000;
 
 /**
  * Official client-supplied logo (public/assets/logo/anchorline-logo.png).
- * Already omits the "CONSTRUCTION & INFRASTRUCTURE" subtext and pairs
- * the mark with the "INDEPENDENT. TECHNICAL. TRUSTED." tagline, per the
- * brief's logo-usage rule — no further alteration made here. Intrinsic
- * size is the supplied file's actual dimensions (707x353); rendered
- * size is controlled by the className below.
+ * Pairs the mark with the "PROJECTS | PEOPLE | PERFORMANCE | PARTNERSHIPS"
+ * tagline — no further alteration made here. Intrinsic size is the
+ * supplied file's actual dimensions (1774x887); rendered size is
+ * controlled by the className below.
  *
  * Hidden admin entry point, per instruction: a normal single tap/click
  * still goes home. Three taps within 600ms, or a 5-second press-and-
@@ -79,8 +78,8 @@ export function Logo() {
       <Image
         src="/assets/logo/anchorline-logo.png"
         alt="Anchorline Project Partners"
-        width={707}
-        height={353}
+        width={1774}
+        height={887}
         className="h-14 w-auto"
         priority
       />

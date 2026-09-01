@@ -11,7 +11,6 @@ const navItems = [
   { href: "/dashboard/how-it-works", label: "How It Works" },
   { href: "/dashboard/coverage-area", label: "Coverage Area" },
   { href: "/dashboard/faq", label: "FAQ" },
-  { href: "/dashboard/testimonials", label: "Testimonials" },
   { href: "/dashboard/sample-report", label: "Sample Report" },
   { href: "/dashboard/media", label: "Images / Media" },
   { href: "/dashboard/contact", label: "Contact Information" },
