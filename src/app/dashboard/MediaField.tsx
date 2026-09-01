@@ -67,18 +67,26 @@ export function MediaField({
     formData.append("file", file);
     formData.append("kind", uploadKind);
 
-    const res = await fetch("/api/dashboard/upload", { method: "POST", body: formData });
-    const result = await res.json();
+    try {
+      const res = await fetch("/api/dashboard/upload", { method: "POST", body: formData });
+      // A platform-level rejection (e.g. Vercel's ~4.5MB request body cap)
+      // returns an HTML error page, not JSON — res.json() would throw and,
+      // uncaught, leave status stuck on "uploading" forever.
+      const result = await res.json();
 
-    if (!res.ok || !result.ok) {
-      setError(result.error || "Upload failed.");
+      if (!res.ok || !result.ok) {
+        setError(result.error || "Upload failed.");
+        setStatus("error");
+        return;
+      }
+
+      onChange(result.url);
+      setStatus("idle");
+      e.target.value = "";
+    } catch {
+      setError("Upload failed. The file may be too large for this fallback path.");
       setStatus("error");
-      return;
     }
-
-    onChange(result.url);
-    setStatus("idle");
-    e.target.value = "";
   }
 
   return (
