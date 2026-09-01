@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { AbujaMapEmbed } from "@/components/sections/AbujaMapEmbed";
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
   title: "Coverage Area",
   description:
     "Abuja-based construction oversight with arranged coverage for FCT and interstate projects across Nigeria.",
+  alternates: { canonical: "/coverage-area" },
 };
 
 export default async function CoverageAreaPage() {
@@ -17,6 +19,8 @@ export default async function CoverageAreaPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Coverage Area" }]} />
+
       <PageHero eyebrow="Coverage" title="Coverage Area" bgImage={coverageArea.images.headerImage} />
 
       <Section>

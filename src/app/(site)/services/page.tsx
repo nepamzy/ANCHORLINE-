@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { TierCard } from "@/components/sections/TierCard";
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
   title: "Services: Watch, Verify, Manage",
   description:
     "Three tiers of independent construction oversight and quantity surveying: Watch, Verify, and Manage. Fees tailored to project scope, location, and visit frequency.",
+  alternates: { canonical: "/services" },
 };
 
 export default async function ServicesPage() {
@@ -18,6 +20,8 @@ export default async function ServicesPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Services" }]} />
+
       <PageHero
         eyebrow="Services"
         title="Watch. Verify. Manage."

@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   title: "Independent Construction Oversight for Diaspora Clients in Nigeria",
   description:
     "Independent site verification, quantity surveying, and project management for clients building or investing in property in Nigeria, from wherever they are.",
+  alternates: { canonical: "/" },
 };
 
 export default async function Home() {

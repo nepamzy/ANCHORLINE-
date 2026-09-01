@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Marker } from "@/components/ui/Marker";
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "Meet the Principal Consultant behind Anchorline Project Partners' independent construction supervision for diaspora clients.",
+  alternates: { canonical: "/about" },
 };
 
 export default async function AboutPage() {
@@ -20,6 +22,8 @@ export default async function AboutPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "About" }]} />
+
       <PageHero eyebrow="About" title={business.name} description={business.tagline} bgImage={aboutContent.images.headerImage} />
 
       <Section>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { ClientContentPlaceholder } from "@/components/ui/ClientContentPlaceholder";
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
   title: "Sample Report",
   description:
     "See the structure of an Anchorline site verification report: summary, photo/video documentation, progress assessment, and recommendations.",
+  alternates: { canonical: "/sample-report" },
 };
 
 export default async function SampleReportPage() {
@@ -22,6 +24,8 @@ export default async function SampleReportPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Sample Report" }]} />
+
       <PageHero
         eyebrow="Sample Report"
         title="What you'll receive after every visit"

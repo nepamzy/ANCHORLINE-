@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { Reveal } from "@/components/motion/Reveal";
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
   title: "Contact / Get a Quote",
   description:
     "Tell us about your project and request a quote from Anchorline Project Partners, or reach us directly on WhatsApp.",
+  alternates: { canonical: "/contact" },
 };
 
 export default async function ContactPage() {
@@ -19,6 +21,8 @@ export default async function ContactPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Contact" }]} />
+
       <PageHero
         eyebrow="Ready to get started?"
         title="Get a Quote"

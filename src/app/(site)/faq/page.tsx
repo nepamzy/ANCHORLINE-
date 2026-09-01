@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { Reveal } from "@/components/motion/Reveal";
@@ -8,13 +9,31 @@ import { getFAQContent } from "@/lib/content";
 export const metadata: Metadata = {
   title: "FAQ",
   description: "Common questions about working with Anchorline Project Partners from abroad.",
+  alternates: { canonical: "/faq" },
 };
 
 export default async function FAQPage() {
   const { items: faqItems, images } = await getFAQContent();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <Breadcrumbs items={[{ label: "FAQ" }]} />
+
       <PageHero eyebrow="FAQ" title="Frequently asked questions" bgImage={images.headerImage} />
 
       <Section>

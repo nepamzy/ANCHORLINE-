@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -11,6 +12,8 @@ import { CTABanner } from "@/components/sections/CTABanner";
 import { Reveal } from "@/components/motion/Reveal";
 import { getServicesContent } from "@/lib/content";
 import { tierDetails } from "@/content/tier-details";
+import { business } from "@/content/site";
+import { siteUrl } from "@/lib/site-url";
 
 export function generateStaticParams() {
   return tierDetails.map((t) => ({ tier: t.name.toLowerCase() }));
@@ -34,6 +37,7 @@ export async function generateMetadata({
   return {
     title: `${found.tier.name}: Full Details`,
     description: found.detail.summary,
+    alternates: { canonical: `/services/${slug.toLowerCase()}` },
   };
 }
 
@@ -43,8 +47,25 @@ export default async function TierDetailPage({ params }: { params: Promise<{ tie
   if (!found) notFound();
   const { tier, detail, images } = found;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: `${tier.name} — construction oversight`,
+    name: `${business.name}: ${tier.name}`,
+    description: detail.summary,
+    provider: { "@type": "ProfessionalService", name: business.name, url: siteUrl },
+    areaServed: ["Abuja", "Federal Capital Territory", "Nigeria"],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <Breadcrumbs items={[{ label: "Services", href: "/services" }, { label: tier.name }]} />
+
       <PageHero
         eyebrow="Services"
         title={`${tier.name}: Full Details`}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { HowItWorksScroller } from "@/components/sections/HowItWorksScroller";
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
   title: "How It Works",
   description:
     "From first enquiry to ongoing site reporting: the five-step client journey for Anchorline Project Partners.",
+  alternates: { canonical: "/how-it-works" },
 };
 
 export default async function HowItWorksPage() {
@@ -16,6 +18,8 @@ export default async function HowItWorksPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "How It Works" }]} />
+
       <PageHero
         eyebrow="Process"
         title="How it works"

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { CTABanner } from "@/components/sections/CTABanner";
@@ -9,11 +10,14 @@ export const metadata: Metadata = {
   title: "Why Anchorline",
   description:
     "The problem Anchorline Project Partners exists to solve: giving diaspora clients and staged-payment clients real control over a project they can't personally stand in front of.",
+  alternates: { canonical: "/why-anchorline" },
 };
 
 export default function WhyAnchorlinePage() {
   return (
     <>
+      <Breadcrumbs items={[{ label: "Why Anchorline" }]} />
+
       <PageHero
         eyebrow="Why Anchorline"
         title="You shouldn't have to feel powerless about your own money"
