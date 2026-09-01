@@ -44,6 +44,9 @@ export const metadata: Metadata = {
     description,
     images: ["/assets/brand/og-image.png"],
   },
+  verification: {
+    google: "TF4Q7HN9pdCp4w33SiigJ82IuqF123S5Q4_LCd21mm4",
+  },
 };
 
 // Content (including WhatsApp/contact info) is now client-editable via
