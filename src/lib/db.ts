@@ -97,8 +97,16 @@ function readLocalStore(): Record<string, Row> {
 }
 
 function writeLocalStore(store: Record<string, Row>): void {
-  fs.mkdirSync(path.dirname(LOCAL_DB_FILE), { recursive: true });
-  fs.writeFileSync(LOCAL_DB_FILE, JSON.stringify(store, null, 2), "utf-8");
+  try {
+    fs.mkdirSync(path.dirname(LOCAL_DB_FILE), { recursive: true });
+    fs.writeFileSync(LOCAL_DB_FILE, JSON.stringify(store, null, 2), "utf-8");
+  } catch {
+    // This fallback only runs when hasD1Credentials() is false, which
+    // should never happen in production — but if D1 env vars are ever
+    // missing/misconfigured there, the filesystem is read-only and this
+    // write would otherwise throw and crash the whole page. Degrade to
+    // "nothing persisted this request" instead of a hard 500.
+  }
 }
 
 function getRowLocal(key: string): Row | null {
