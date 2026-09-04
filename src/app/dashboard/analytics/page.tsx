@@ -40,7 +40,7 @@ function StatCard({
           </span>
         )}
       </div>
-      <p className="mt-1 text-xs text-slate">vs. previous 30 days</p>
+      <p className="mt-1 text-xs text-slate">vs. previous 15 days</p>
     </div>
   );
 }
@@ -117,18 +117,43 @@ export default async function AnalyticsPage() {
   }
 
   const today = isoDaysAgo(0);
+  const start15 = isoDaysAgo(15);
   const start30 = isoDaysAgo(30);
-  const start60 = isoDaysAgo(60);
 
-  const [current, previous, daily, pages, referrers, countries, devices] = await Promise.all([
-    getVisitTotals(start30, today),
-    getVisitTotals(start60, start30),
-    getDailyTimeseries(start30, today),
-    getBreakdown("route", start30, today),
-    getBreakdown("referrerHostname", start30, today),
-    getBreakdown("country", start30, today),
-    getBreakdown("deviceType", start30, today),
-  ]);
+  // Vercel's Hobby plan only exposes the latest 31 days of Web Analytics
+  // data via this API — comparing two full 30-day periods would need a
+  // 60-day lookback and gets rejected with a 400. Comparing the last 15
+  // days against the 15 before that stays within the 31-day window while
+  // still giving a period-over-period trend.
+  let data;
+  try {
+    const [current, previous, daily, pages, referrers, countries, devices] = await Promise.all([
+      getVisitTotals(start15, today),
+      getVisitTotals(start30, start15),
+      getDailyTimeseries(start30, today),
+      getBreakdown("route", start30, today),
+      getBreakdown("referrerHostname", start30, today),
+      getBreakdown("country", start30, today),
+      getBreakdown("deviceType", start30, today),
+    ]);
+    data = { current, previous, daily, pages, referrers, countries, devices };
+  } catch (err) {
+    console.error("[dashboard/analytics] Vercel analytics request failed:", err);
+    return (
+      <div>
+        <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Analytics</p>
+        <h1 className="mt-1 text-2xl font-bold text-navy-900">Website Analytics</h1>
+        <div className="mt-6 max-w-xl rounded-card border border-line bg-paper p-6">
+          <p className="font-semibold text-navy-900">Couldn&apos;t load analytics right now</p>
+          <p className="mt-2 text-sm text-slate">
+            The connection to Vercel&apos;s analytics data failed. Try reloading this page in a moment —
+            if it keeps happening, let your developer know.
+          </p>
+        </div>
+      </div>
+    );
+  }
+  const { current, previous, daily, pages, referrers, countries, devices } = data;
 
   const viewsPerVisitor = current.visitors > 0 ? (current.pageviews / current.visitors).toFixed(1) : "0";
   const prevViewsPerVisitor = previous.visitors > 0 ? previous.pageviews / previous.visitors : 0;
@@ -138,13 +163,12 @@ export default async function AnalyticsPage() {
       <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Analytics</p>
       <h1 className="mt-1 text-2xl font-bold text-navy-900">Website Analytics</h1>
       <p className="mt-2 max-w-xl text-slate">
-        Real visitor data from the live site, last 30 days. Updates automatically as people browse
-        anchorline.site.
+        Real visitor data from the live site. Updates automatically as people browse anchorline.site.
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
-        <StatCard label="Visitors" value={current.visitors.toLocaleString()} change={formatChange(current.visitors, previous.visitors)} />
-        <StatCard label="Pageviews" value={current.pageviews.toLocaleString()} change={formatChange(current.pageviews, previous.pageviews)} />
+        <StatCard label="Visitors (last 15 days)" value={current.visitors.toLocaleString()} change={formatChange(current.visitors, previous.visitors)} />
+        <StatCard label="Pageviews (last 15 days)" value={current.pageviews.toLocaleString()} change={formatChange(current.pageviews, previous.pageviews)} />
         <StatCard label="Pages per visitor" value={viewsPerVisitor} change={formatChange(Number(viewsPerVisitor), prevViewsPerVisitor)} />
       </div>
 
