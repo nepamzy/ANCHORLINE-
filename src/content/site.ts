@@ -21,7 +21,6 @@ export const business = {
 export const navigation = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Why Anchorline", href: "/why-anchorline" },
   { label: "Services", href: "/services" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Sample Report", href: "/sample-report" },
@@ -41,21 +40,17 @@ export const trustPillars = [
   "Technically Qualified",
 ] as const;
 
-// Short rotating lines for the homepage hero video. Each restates a fact
-// already established elsewhere on the site (tagline, positioning items,
-// About credentials, service tiers) in a single short sentence, not new
-// marketing copy.
+// Short rotating lines for the homepage hero video, supplied directly by
+// the client. Each cycles in for 3s (see HeroLines) with a different
+// entrance animation.
 export const heroRotatingLines = [
-  "Your eyes on the ground, wherever you are.",
-  "Independent oversight, reporting only to you.",
-  "Every visit documented with dated photos and video.",
-  "Led by a practicing construction project manager.",
-  "Reports delivered by WhatsApp or email, wherever you are.",
-  "Abuja based, with coverage arranged nationwide.",
-  "Every engagement runs on a signed letter.",
-  "Site verification, quantity surveying, and project management.",
-  "Watch, Verify, or Manage. The choice is yours.",
-  "Built for diaspora clients building from abroad.",
+  "Independent eyes on your project. Always.",
+  "You fund it. We verify it.",
+  "No contractor bias. No guesswork. Just facts.",
+  "Real site visits. Real reports. Real accountability.",
+  "Technically trained. Fully independent. On your side.",
+  "Every stage confirmed, before you release payment.",
+  "Distance shouldn't mean losing control of your build.",
 ] as const;
 
 // Headline facts already established elsewhere in the brief (About's

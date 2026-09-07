@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { SiteLineDiagram } from "./SiteLineDiagram";
 import { HeroStats } from "./HeroStats";
-import { RotatingWord } from "./RotatingWord";
+import { HeroLines } from "./HeroLines";
 import { business, contactNav, trustPillars, heroRotatingLines } from "@/content/site";
 
 /**
@@ -47,10 +47,10 @@ export function Hero({ heroDescription, videoSrc }: { heroDescription: string; v
         {/* Left-side gradient scrim, only behind the rotating text — the rest of the video stays clear. */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-[min(95vw,760px)] bg-linear-to-r from-ink/80 via-ink/35 to-transparent" aria-hidden />
 
-        <div className="absolute top-1/2 left-[6vw] max-w-xl -translate-y-1/2">
-          <RotatingWord
-            words={heroRotatingLines}
-            className="block font-display text-[clamp(1.75rem,4.5vw,3.25rem)] leading-[1.05] font-bold text-paper"
+        <div className="absolute bottom-16 left-[6vw] max-w-xl sm:bottom-20">
+          <HeroLines
+            lines={heroRotatingLines}
+            className="block font-display text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.05] font-bold text-paper"
           />
         </div>
 
