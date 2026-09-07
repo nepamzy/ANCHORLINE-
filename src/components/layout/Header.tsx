@@ -5,23 +5,14 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "./Logo";
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/Button";
-import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { TierIcon } from "@/components/sections/TierIcon";
-import { contactNav, navigation } from "@/content/site";
+import { navigation } from "@/content/site";
 import type { Tier } from "@/lib/content";
 
-export function Header({
-  whatsappHref,
-  whatsappNumber,
-  tiers,
-}: {
-  whatsappHref: string;
-  whatsappNumber: string;
-  tiers: Tier[];
-}) {
+export function Header({ tiers }: { tiers: Tier[] }) {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -31,7 +22,47 @@ export function Header({
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
           {navigation.map((item) =>
-            item.label === "Services" ? (
+            item.label === "About" ? (
+              <div
+                key={item.href}
+                className="relative"
+                onMouseEnter={() => setAboutOpen(true)}
+                onMouseLeave={() => setAboutOpen(false)}
+              >
+                <Link
+                  href={item.href}
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  aria-expanded={aboutOpen}
+                  onFocus={() => setAboutOpen(true)}
+                  className={`relative flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:text-navy-900 after:absolute after:-bottom-0 after:left-3 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 ${
+                    pathname === item.href || pathname === "/why-anchorline"
+                      ? "text-navy-900 after:w-6"
+                      : "text-slate after:w-0 hover:after:w-6"
+                  }`}
+                >
+                  {item.label}
+                  <svg viewBox="0 0 12 8" className="h-2.5 w-2.5" aria-hidden="true">
+                    <path d="M1 1.5 6 6.5 11 1.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                  </svg>
+                </Link>
+
+                {aboutOpen && (
+                  <div
+                    className="absolute top-full left-1/2 w-56 -translate-x-1/2 pt-2"
+                    onFocus={() => setAboutOpen(true)}
+                  >
+                    <div className="rounded-card border border-line bg-paper p-2 shadow-lg">
+                      <Link
+                        href="/why-anchorline"
+                        className="block rounded-control px-3 py-2.5 text-sm font-semibold text-navy-800 hover:bg-navy-50 hover:text-navy-900"
+                      >
+                        Why Anchorline
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : item.label === "Services" ? (
               <div
                 key={item.href}
                 className="relative"
@@ -103,13 +134,6 @@ export function Header({
           )}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-3">
-          <WhatsAppButton href={whatsappHref} number={whatsappNumber} />
-          <Button href={contactNav.href} variant="gold">
-            Get a Quote
-          </Button>
-        </div>
-
         <button
           type="button"
           className="lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 rounded-control border border-line text-navy-900"
@@ -139,24 +163,31 @@ export function Header({
         >
           <Container className="flex flex-col gap-1 py-4">
             {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                aria-current={pathname === item.href ? "page" : undefined}
-                className={`min-h-11 flex items-center rounded-control px-2 text-base font-medium ${
-                  pathname === item.href ? "text-navy-900 bg-navy-50" : "text-ink"
-                }`}
-              >
-                {item.label}
-              </Link>
+              <div key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  className={`min-h-11 flex items-center rounded-control px-2 text-base font-medium ${
+                    pathname === item.href ? "text-navy-900 bg-navy-50" : "text-ink"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+                {item.label === "About" && (
+                  <Link
+                    href="/why-anchorline"
+                    onClick={() => setOpen(false)}
+                    aria-current={pathname === "/why-anchorline" ? "page" : undefined}
+                    className={`ml-4 flex min-h-11 items-center rounded-control px-2 text-sm font-medium ${
+                      pathname === "/why-anchorline" ? "text-navy-900 bg-navy-50" : "text-slate"
+                    }`}
+                  >
+                    Why Anchorline
+                  </Link>
+                )}
+              </div>
             ))}
-            <div className="mt-3 flex flex-col gap-3">
-              <Button href={contactNav.href} variant="gold" onClick={() => setOpen(false)}>
-                Get a Quote
-              </Button>
-              <WhatsAppButton href={whatsappHref} number={whatsappNumber} />
-            </div>
           </Container>
         </nav>
       )}

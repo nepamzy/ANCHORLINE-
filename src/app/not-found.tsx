@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingActions } from "@/components/layout/FloatingActions";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { getContactInfo, getServicesContent, whatsappHrefFor } from "@/lib/content";
+import { getServicesContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Page Not Found",
@@ -14,14 +15,12 @@ export const metadata: Metadata = {
 // rendered directly here to keep the same chrome on a 404 as everywhere
 // else on the site.
 export default async function NotFound() {
-  const { whatsappNumber } = await getContactInfo();
   const { tiers } = await getServicesContent();
-  const whatsappHref = whatsappHrefFor(whatsappNumber);
 
   return (
     <>
-      <Header whatsappHref={whatsappHref} whatsappNumber={whatsappNumber} tiers={tiers} />
-      <main className="flex-1">
+      <Header tiers={tiers} />
+      <main className="flex-1 pb-20">
         <Container className="flex min-h-[50vh] flex-col items-start justify-center py-24 sm:py-32">
           <p className="font-mono text-xs tracking-[0.3em] text-gold-600 uppercase">404</p>
           <h1 className="mt-4 max-w-xl font-display text-4xl font-medium tracking-tight text-navy-950 sm:text-5xl">
@@ -45,6 +44,7 @@ export default async function NotFound() {
         </Container>
       </main>
       <Footer />
+      <FloatingActions />
     </>
   );
 }

@@ -122,6 +122,42 @@ body {
   animation: fade-up 0.7s ease-out both;
 }
 
+/*
+  Hero rotating-line entrances — each cycle picks a different direction
+  (left/right/up/down) or a plain fade so the sentences don't all arrive
+  the same way. Transform-only, kept separate from the opacity
+  fade handled by the component's own transition so the two never fight.
+*/
+@keyframes hero-slide-left {
+  from { transform: translateX(-32px); }
+  to { transform: translateX(0); }
+}
+@keyframes hero-slide-right {
+  from { transform: translateX(32px); }
+  to { transform: translateX(0); }
+}
+@keyframes hero-slide-up {
+  from { transform: translateY(32px); }
+  to { transform: translateY(0); }
+}
+@keyframes hero-slide-down {
+  from { transform: translateY(-32px); }
+  to { transform: translateY(0); }
+}
+
+.animate-hero-slide-left {
+  animation: hero-slide-left 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-hero-slide-right {
+  animation: hero-slide-right 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-hero-slide-up {
+  animation: hero-slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-hero-slide-down {
+  animation: hero-slide-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 /* Hides the scrollbar on horizontally-swipeable strips (PositioningCarousel)
    without disabling scroll/swipe — the snap points are the visible affordance. */
 .scrollbar-hide {

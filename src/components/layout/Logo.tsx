@@ -11,9 +11,11 @@ const LONG_PRESS_MS = 5000;
 /**
  * Official client-supplied logo (public/assets/logo/anchorline-logo.png).
  * Pairs the mark with the "PROJECTS | PEOPLE | PERFORMANCE | PARTNERSHIPS"
- * tagline — no further alteration made here. Intrinsic size is the
- * supplied file's actual dimensions (1774x887); rendered size is
- * controlled by the className below.
+ * tagline. The source file's opaque white backing was keyed out to
+ * transparent and the canvas cropped to the mark's bounding box, so it
+ * sits directly on the header instead of showing a white plate; intrinsic
+ * size (1631x491) reflects that crop. Rendered size is controlled by the
+ * className below.
  *
  * Hidden admin entry point, per instruction: a normal single tap/click
  * still goes home. Three taps within 600ms, or a 5-second press-and-
@@ -78,9 +80,9 @@ export function Logo() {
       <Image
         src="/assets/logo/anchorline-logo.png"
         alt="Anchorline Project Partners"
-        width={1774}
-        height={887}
-        className="h-14 w-auto"
+        width={1631}
+        height={491}
+        className="h-11 w-auto sm:h-12"
         priority
       />
     </Link>
