@@ -86,6 +86,8 @@ export type Invoice = {
   status: "Unpaid" | "Paid";
   created_at: string;
   paid_at: string | null;
+  provider: "paystack" | "stripe" | null;
+  provider_reference: string | null;
 };
 
 export type InvoiceWithProject = Invoice & { project_name: string };
@@ -160,6 +162,24 @@ export async function ensurePortalSchema(): Promise<void> {
     created_at TEXT NOT NULL,
     paid_at TEXT
   )`);
+
+  // Added after the invoices table first shipped — CREATE TABLE IF NOT
+  // EXISTS above is a no-op against an existing table, so these two
+  // columns need their own migration. ALTER TABLE ADD COLUMN isn't
+  // idempotent in SQLite/D1 (errors on a column that already exists),
+  // so swallow exactly that error rather than guard with a pragma
+  // query on every cold start.
+  await addColumnIfMissing("invoices", "provider", "TEXT");
+  await addColumnIfMissing("invoices", "provider_reference", "TEXT");
+}
+
+async function addColumnIfMissing(table: string, column: string, type: string): Promise<void> {
+  try {
+    await d1Query(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (!message.includes("duplicate column name")) throw err;
+  }
 }
 
 // --- Dev-only local JSON file store -------------------------------------
@@ -696,6 +716,8 @@ export async function createInvoice(input: {
     status: "Unpaid",
     created_at: new Date().toISOString(),
     paid_at: null,
+    provider: null,
+    provider_reference: null,
   };
 
   if (!hasD1Credentials()) {
@@ -711,6 +733,14 @@ export async function createInvoice(input: {
     [invoice.id, invoice.project_id, invoice.description, invoice.amount, invoice.currency, invoice.status, invoice.created_at]
   );
   return invoice;
+}
+
+export async function getInvoiceById(id: string): Promise<Invoice | null> {
+  if (!hasD1Credentials()) {
+    return readLocal().invoices.find((i) => i.id === id) ?? null;
+  }
+  const rows = await d1Query<Invoice>("SELECT * FROM invoices WHERE id = ?", [id]);
+  return rows[0] ?? null;
 }
 
 export async function listInvoicesForProject(projectId: string): Promise<Invoice[]> {
@@ -752,4 +782,30 @@ export async function setInvoiceStatus(id: string, status: Invoice["status"]): P
     return;
   }
   await d1Query("UPDATE invoices SET status = ?, paid_at = ? WHERE id = ?", [status, paidAt, id]);
+}
+
+/** Marks an invoice paid via a real payment processor (as opposed to the admin's manual toggle), recording which one and its transaction reference. Idempotent — safe to call more than once for the same payment (e.g. both the redirect callback and a later webhook). */
+export async function markInvoicePaidByProvider(
+  id: string,
+  provider: NonNullable<Invoice["provider"]>,
+  reference: string
+): Promise<void> {
+  const paidAt = new Date().toISOString();
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    const invoice = store.invoices.find((i) => i.id === id);
+    if (invoice && invoice.status !== "Paid") {
+      invoice.status = "Paid";
+      invoice.paid_at = paidAt;
+      invoice.provider = provider;
+      invoice.provider_reference = reference;
+      writeLocal(store);
+    }
+    return;
+  }
+  await d1Query(
+    `UPDATE invoices SET status = 'Paid', paid_at = ?, provider = ?, provider_reference = ?
+     WHERE id = ? AND status != 'Paid'`,
+    [paidAt, provider, reference, id]
+  );
 }
