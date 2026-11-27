@@ -23,6 +23,8 @@
   /* Gold scale (derived) */
   --color-gold-600: #b6800f;
   --color-gold-500: #e4a41f;
+  --color-gold-400: #eab64a;
+  --color-gold-200: #f4da9f;
   --color-gold-100: #faecc9;
 
   /* Neutrals — warm stone tones, not stark white, so large light
@@ -62,6 +64,8 @@
   --color-gold: var(--color-gold);
   --color-gold-600: var(--color-gold-600);
   --color-gold-500: var(--color-gold-500);
+  --color-gold-400: var(--color-gold-400);
+  --color-gold-200: var(--color-gold-200);
   --color-gold-100: var(--color-gold-100);
 
   --color-ink: var(--color-ink);

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireSessionResponse } from "@/lib/dashboard-auth";
-import { createInvoice } from "@/lib/portal-db";
+import { createInvoice, getProjectById } from "@/lib/portal-db";
+import { notifyCustomer } from "@/lib/push";
 
 export const runtime = "nodejs";
 
@@ -39,5 +40,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     amount,
     currency: currency as (typeof VALID_CURRENCIES)[number],
   });
+
+  const project = await getProjectById(projectId);
+  if (project) {
+    const symbol = currency === "USD" ? "$" : "₦";
+    notifyCustomer(project.customer_id, {
+      title: "New invoice issued",
+      body: `${symbol}${amount.toLocaleString("en-US", { minimumFractionDigits: 2 })} — ${description}`,
+      url: "/portal/payments",
+    }).catch(() => {});
+  }
+
   return NextResponse.json({ ok: true, invoice });
 }

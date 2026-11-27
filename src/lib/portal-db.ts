@@ -92,6 +92,15 @@ export type Invoice = {
 
 export type InvoiceWithProject = Invoice & { project_name: string };
 
+export type PushSubscription = {
+  id: string;
+  customer_id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  created_at: string;
+};
+
 let schemaEnsured = false;
 
 export async function ensurePortalSchema(): Promise<void> {
@@ -171,6 +180,15 @@ export async function ensurePortalSchema(): Promise<void> {
   // query on every cold start.
   await addColumnIfMissing("invoices", "provider", "TEXT");
   await addColumnIfMissing("invoices", "provider_reference", "TEXT");
+
+  await d1Query(`CREATE TABLE IF NOT EXISTS push_subscriptions (
+    id TEXT PRIMARY KEY,
+    customer_id TEXT NOT NULL,
+    endpoint TEXT NOT NULL UNIQUE,
+    p256dh TEXT NOT NULL,
+    auth TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  )`);
 }
 
 async function addColumnIfMissing(table: string, column: string, type: string): Promise<void> {
@@ -192,6 +210,7 @@ type LocalStore = {
   documents: ProjectDocument[];
   messages: Message[];
   invoices: Invoice[];
+  pushSubscriptions: PushSubscription[];
 };
 
 const LOCAL_FILE = path.join(process.cwd(), "data", "portal.json");
@@ -208,6 +227,7 @@ function readLocal(): LocalStore {
       documents: parsed.documents ?? [],
       messages: parsed.messages ?? [],
       invoices: parsed.invoices ?? [],
+      pushSubscriptions: parsed.pushSubscriptions ?? [],
     };
   } catch {
     return {
@@ -218,6 +238,7 @@ function readLocal(): LocalStore {
       documents: [],
       messages: [],
       invoices: [],
+      pushSubscriptions: [],
     };
   }
 }
@@ -808,4 +829,58 @@ export async function markInvoicePaidByProvider(
      WHERE id = ? AND status != 'Paid'`,
     [paidAt, provider, reference, id]
   );
+}
+
+// --- Push subscriptions ---------------------------------------------------
+
+/** Upserts by endpoint — re-subscribing (e.g. after clearing site data) replaces the stored keys for that endpoint instead of creating a duplicate row. */
+export async function savePushSubscription(input: {
+  customerId: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+}): Promise<void> {
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    const existing = store.pushSubscriptions.find((s) => s.endpoint === input.endpoint);
+    if (existing) {
+      existing.customer_id = input.customerId;
+      existing.p256dh = input.p256dh;
+      existing.auth = input.auth;
+    } else {
+      store.pushSubscriptions.push({
+        id: newId(),
+        customer_id: input.customerId,
+        endpoint: input.endpoint,
+        p256dh: input.p256dh,
+        auth: input.auth,
+        created_at: new Date().toISOString(),
+      });
+    }
+    writeLocal(store);
+    return;
+  }
+  await d1Query(
+    `INSERT INTO push_subscriptions (id, customer_id, endpoint, p256dh, auth, created_at)
+     VALUES (?, ?, ?, ?, ?, ?)
+     ON CONFLICT(endpoint) DO UPDATE SET customer_id = excluded.customer_id, p256dh = excluded.p256dh, auth = excluded.auth`,
+    [newId(), input.customerId, input.endpoint, input.p256dh, input.auth, new Date().toISOString()]
+  );
+}
+
+export async function deletePushSubscription(endpoint: string): Promise<void> {
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    store.pushSubscriptions = store.pushSubscriptions.filter((s) => s.endpoint !== endpoint);
+    writeLocal(store);
+    return;
+  }
+  await d1Query("DELETE FROM push_subscriptions WHERE endpoint = ?", [endpoint]);
+}
+
+export async function listPushSubscriptionsForCustomer(customerId: string): Promise<PushSubscription[]> {
+  if (!hasD1Credentials()) {
+    return readLocal().pushSubscriptions.filter((s) => s.customer_id === customerId);
+  }
+  return d1Query<PushSubscription>("SELECT * FROM push_subscriptions WHERE customer_id = ?", [customerId]);
 }

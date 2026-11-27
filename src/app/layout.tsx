@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { siteUrl } from "@/lib/site-url";
+import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -47,6 +48,16 @@ export const metadata: Metadata = {
   verification: {
     google: "TF4Q7HN9pdCp4w33SiigJ82IuqF123S5Q4_LCd21mm4",
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Anchorline",
+  },
+};
+
+export const viewport = {
+  themeColor: "#0b2954",
 };
 
 // Content (including WhatsApp/contact info) is now client-editable via
@@ -66,6 +77,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-paper text-ink font-sans">
         {children}
         <Analytics />
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

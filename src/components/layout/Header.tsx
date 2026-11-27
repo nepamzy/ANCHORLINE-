@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "./Logo";
 import { Container } from "@/components/ui/Container";
+import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 import { TierIcon } from "@/components/sections/TierIcon";
 import { navigation } from "@/content/site";
 import type { Tier } from "@/lib/content";
@@ -134,6 +135,8 @@ export function Header({ tiers }: { tiers: Tier[] }) {
           )}
         </nav>
 
+        <InstallAppButton className="hidden items-center gap-1.5 rounded-full border border-line px-3.5 py-2 text-xs font-semibold text-slate hover:text-navy-900 lg:inline-flex" />
+
         <button
           type="button"
           className="lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 rounded-control border border-line text-navy-900"
@@ -188,6 +191,7 @@ export function Header({ tiers }: { tiers: Tier[] }) {
                 )}
               </div>
             ))}
+            <InstallAppButton className="mt-2 flex min-h-11 w-full items-center gap-2 rounded-control border border-line px-2 text-sm font-medium text-ink" />
           </Container>
         </nav>
       )}
