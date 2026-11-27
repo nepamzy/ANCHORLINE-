@@ -1,16 +1,28 @@
-import { ComingSoon } from "@/components/portal/ComingSoon";
+import { getCustomerSession } from "@/lib/portal-auth";
+import { listMessagesForCustomer, ensurePortalSchema } from "@/lib/portal-db";
+import { MessageThread } from "@/components/portal/MessageThread";
 
-export default function PortalMessagesPage() {
+export default async function PortalMessagesPage() {
+  const session = await getCustomerSession();
+  if (!session) return null;
+
+  await ensurePortalSchema();
+  const messages = await listMessagesForCustomer(session.customerId);
+
   return (
-    <ComingSoon
-      eyebrow="Messages"
-      title="Talk to our team"
-      description="Direct, in-portal messaging with Anchorline is on its way, so you can discuss your project without leaving your dashboard."
-      icon={
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 5h16v11H8l-4 4V5Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      }
-    />
+    <div>
+      <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Messages</p>
+      <h1 className="mt-1 text-2xl font-bold text-navy-900 sm:text-3xl">Talk to our team</h1>
+      <p className="mt-2 max-w-xl text-slate">Message us directly about any of your projects.</p>
+
+      <div className="mt-8 max-w-2xl">
+        <MessageThread
+          messages={messages}
+          postUrl="/api/portal/messages"
+          ownSender="customer"
+          placeholder="Write a message…"
+        />
+      </div>
+    </div>
   );
 }
