@@ -4,10 +4,13 @@ import {
   getCustomerById,
   listReportsForProject,
   listDocumentsForProject,
+  listInvoicesForProject,
 } from "@/lib/portal-db";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { AddReportForm } from "./AddReportForm";
 import { AddDocumentForm } from "./AddDocumentForm";
+import { AddInvoiceForm } from "./AddInvoiceForm";
+import { InvoiceList } from "./InvoiceList";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -18,10 +21,11 @@ export default async function DashboardProjectDetailPage({ params }: { params: P
   const project = await getProjectById(id);
   if (!project) notFound();
 
-  const [customer, reports, documents] = await Promise.all([
+  const [customer, reports, documents, invoices] = await Promise.all([
     getCustomerById(project.customer_id),
     listReportsForProject(project.id),
     listDocumentsForProject(project.id),
+    listInvoicesForProject(project.id),
   ]);
 
   return (
@@ -83,6 +87,17 @@ export default async function DashboardProjectDetailPage({ params }: { params: P
               </ul>
             )}
           </div>
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <AddInvoiceForm projectId={project.id} />
+        <div className="mt-5 rounded-card border border-line bg-paper p-5 shadow-card">
+          <p className="font-semibold text-navy-900">Invoices</p>
+          <p className="text-xs text-slate">
+            Marking paid here is manual for now — no payment processor is connected yet.
+          </p>
+          <InvoiceList invoices={invoices} />
         </div>
       </div>
     </div>

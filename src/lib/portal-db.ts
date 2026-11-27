@@ -77,6 +77,19 @@ export type Message = {
   created_at: string;
 };
 
+export type Invoice = {
+  id: string;
+  project_id: string;
+  description: string;
+  amount: number;
+  currency: "NGN" | "USD";
+  status: "Unpaid" | "Paid";
+  created_at: string;
+  paid_at: string | null;
+};
+
+export type InvoiceWithProject = Invoice & { project_name: string };
+
 let schemaEnsured = false;
 
 export async function ensurePortalSchema(): Promise<void> {
@@ -136,6 +149,17 @@ export async function ensurePortalSchema(): Promise<void> {
     body TEXT NOT NULL,
     created_at TEXT NOT NULL
   )`);
+
+  await d1Query(`CREATE TABLE IF NOT EXISTS invoices (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    description TEXT NOT NULL,
+    amount REAL NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'NGN',
+    status TEXT NOT NULL DEFAULT 'Unpaid',
+    created_at TEXT NOT NULL,
+    paid_at TEXT
+  )`);
 }
 
 // --- Dev-only local JSON file store -------------------------------------
@@ -147,6 +171,7 @@ type LocalStore = {
   reports: SiteVisitReport[];
   documents: ProjectDocument[];
   messages: Message[];
+  invoices: Invoice[];
 };
 
 const LOCAL_FILE = path.join(process.cwd(), "data", "portal.json");
@@ -162,9 +187,18 @@ function readLocal(): LocalStore {
       reports: parsed.reports ?? [],
       documents: parsed.documents ?? [],
       messages: parsed.messages ?? [],
+      invoices: parsed.invoices ?? [],
     };
   } catch {
-    return { customers: [], projects: [], requests: [], reports: [], documents: [], messages: [] };
+    return {
+      customers: [],
+      projects: [],
+      requests: [],
+      reports: [],
+      documents: [],
+      messages: [],
+      invoices: [],
+    };
   }
 }
 
@@ -643,4 +677,79 @@ export async function listCustomersWithMessageSummary(): Promise<CustomerWithLas
      GROUP BY c.id
      ORDER BY last_message_at DESC`
   );
+}
+
+// --- Invoices --------------------------------------------------------------
+
+export async function createInvoice(input: {
+  projectId: string;
+  description: string;
+  amount: number;
+  currency: Invoice["currency"];
+}): Promise<Invoice> {
+  const invoice: Invoice = {
+    id: newId(),
+    project_id: input.projectId,
+    description: input.description.trim(),
+    amount: input.amount,
+    currency: input.currency,
+    status: "Unpaid",
+    created_at: new Date().toISOString(),
+    paid_at: null,
+  };
+
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    store.invoices.push(invoice);
+    writeLocal(store);
+    return invoice;
+  }
+
+  await d1Query(
+    `INSERT INTO invoices (id, project_id, description, amount, currency, status, created_at, paid_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, NULL)`,
+    [invoice.id, invoice.project_id, invoice.description, invoice.amount, invoice.currency, invoice.status, invoice.created_at]
+  );
+  return invoice;
+}
+
+export async function listInvoicesForProject(projectId: string): Promise<Invoice[]> {
+  if (!hasD1Credentials()) {
+    return readLocal()
+      .invoices.filter((i) => i.project_id === projectId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  }
+  return d1Query<Invoice>("SELECT * FROM invoices WHERE project_id = ? ORDER BY created_at DESC", [projectId]);
+}
+
+export async function listInvoicesForCustomer(customerId: string): Promise<InvoiceWithProject[]> {
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    const projectIds = new Set(store.projects.filter((p) => p.customer_id === customerId).map((p) => p.id));
+    return store.invoices
+      .filter((i) => projectIds.has(i.project_id))
+      .map((i) => ({ ...i, project_name: store.projects.find((p) => p.id === i.project_id)?.name ?? "" }))
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  }
+  return d1Query<InvoiceWithProject>(
+    `SELECT i.*, p.name AS project_name FROM invoices i
+     JOIN projects p ON p.id = i.project_id
+     WHERE p.customer_id = ? ORDER BY i.created_at DESC`,
+    [customerId]
+  );
+}
+
+export async function setInvoiceStatus(id: string, status: Invoice["status"]): Promise<void> {
+  const paidAt = status === "Paid" ? new Date().toISOString() : null;
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    const invoice = store.invoices.find((i) => i.id === id);
+    if (invoice) {
+      invoice.status = status;
+      invoice.paid_at = paidAt;
+      writeLocal(store);
+    }
+    return;
+  }
+  await d1Query("UPDATE invoices SET status = ?, paid_at = ? WHERE id = ?", [status, paidAt, id]);
 }
