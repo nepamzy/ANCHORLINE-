@@ -3,6 +3,8 @@ const classes: Record<string, string> = {
   "In Progress": "bg-navy-100 text-navy-800",
   Completed: "bg-[#e7f5ec] text-status-ontrack",
   Active: "bg-[#e7f5ec] text-status-ontrack",
+  Paid: "bg-[#e7f5ec] text-status-ontrack",
+  Unpaid: "bg-gold-100 text-status-minor",
 };
 
 export function StatusPill({ status }: { status: string }) {

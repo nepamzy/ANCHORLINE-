@@ -1,7 +1,17 @@
 import Link from "next/link";
 import { getCustomerSession } from "@/lib/portal-auth";
-import { getCustomerById, listProjectsForCustomer, listRequestsForCustomer } from "@/lib/portal-db";
+import {
+  getCustomerById,
+  listProjectsForCustomer,
+  listRequestsForCustomer,
+  listInvoicesForCustomer,
+} from "@/lib/portal-db";
 import { StatusPill } from "@/components/portal/StatusPill";
+
+function formatAmount(amount: number, currency: string): string {
+  const symbol = currency === "USD" ? "$" : "₦";
+  return `${symbol}${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
 
 const REQUEST_TYPE_LABEL: Record<string, string> = {
   new_project: "New project booking",
@@ -17,19 +27,32 @@ export default async function PortalOverviewPage() {
   const customer = session ? await getCustomerById(session.customerId) : null;
   if (!customer) return null;
 
-  const [projects, requests] = await Promise.all([
+  const [projects, requests, invoices] = await Promise.all([
     listProjectsForCustomer(customer.id),
     listRequestsForCustomer(customer.id),
+    listInvoicesForCustomer(customer.id),
   ]);
 
   const openRequests = requests.filter((r) => r.status !== "Completed");
-  const completedRequests = requests.filter((r) => r.status === "Completed");
   const firstName = customer.name.split(" ")[0];
+
+  const outstandingByCurrency = invoices
+    .filter((i) => i.status === "Unpaid")
+    .reduce<Record<string, number>>((acc, i) => {
+      acc[i.currency] = (acc[i.currency] ?? 0) + i.amount;
+      return acc;
+    }, {});
+  const outstandingLabel =
+    Object.keys(outstandingByCurrency).length === 0
+      ? "₦0.00"
+      : Object.entries(outstandingByCurrency)
+          .map(([currency, amount]) => formatAmount(amount, currency))
+          .join(" + ");
 
   const stats = [
     { label: "Your projects", value: String(projects.length) },
     { label: "Open requests", value: String(openRequests.length) },
-    { label: "Completed requests", value: String(completedRequests.length) },
+    { label: "Outstanding balance", value: outstandingLabel },
     { label: "Member since", value: formatDate(customer.created_at) },
   ];
 
