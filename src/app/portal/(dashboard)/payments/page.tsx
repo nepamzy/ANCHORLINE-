@@ -2,6 +2,9 @@ import Link from "next/link";
 import { getCustomerSession } from "@/lib/portal-auth";
 import { listInvoicesForCustomer } from "@/lib/portal-db";
 import { StatusPill } from "@/components/portal/StatusPill";
+import { PayButton } from "@/components/portal/PayButton";
+import { hasPaystackCredentials } from "@/lib/payments/paystack";
+import { hasStripeCredentials } from "@/lib/payments/stripe";
 
 function formatAmount(amount: number, currency: string): string {
   const symbol = currency === "USD" ? "$" : "₦";
@@ -12,10 +15,15 @@ function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
-export default async function PortalPaymentsPage() {
+export default async function PortalPaymentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
   const session = await getCustomerSession();
   if (!session) return null;
 
+  const { status: redirectStatus } = await searchParams;
   const invoices = await listInvoicesForCustomer(session.customerId);
   const unpaid = invoices.filter((i) => i.status === "Unpaid");
   const outstandingByCurrency = unpaid.reduce<Record<string, number>>((acc, i) => {
@@ -23,11 +31,29 @@ export default async function PortalPaymentsPage() {
     return acc;
   }, {});
 
+  const noProcessorConfigured = !hasPaystackCredentials() && !hasStripeCredentials();
+
   return (
     <div>
       <p className="text-sm font-semibold uppercase tracking-wide text-gold-600">Payments</p>
       <h1 className="mt-1 text-2xl font-bold text-navy-900 sm:text-3xl">Payments</h1>
       <p className="mt-2 max-w-xl text-slate">Your invoices across all projects.</p>
+
+      {redirectStatus === "success" && (
+        <div className="mt-6 rounded-control border border-status-ontrack bg-[#e7f5ec] p-4 text-sm text-status-ontrack">
+          Payment received — thank you. This invoice is now marked Paid below.
+        </div>
+      )}
+      {redirectStatus === "failed" && (
+        <div className="mt-6 rounded-control border border-status-attention bg-[#fbe9e8] p-4 text-sm text-status-attention">
+          We couldn&apos;t confirm that payment. If you were charged, message us and we&apos;ll sort it out.
+        </div>
+      )}
+      {redirectStatus === "cancelled" && (
+        <div className="mt-6 rounded-control border border-line bg-paper p-4 text-sm text-slate">
+          Payment cancelled — nothing was charged.
+        </div>
+      )}
 
       {invoices.length === 0 ? (
         <div className="mt-8 rounded-card border border-dashed border-line bg-paper p-10 text-center">
@@ -56,7 +82,7 @@ export default async function PortalPaymentsPage() {
             )}
           </div>
 
-          {unpaid.length > 0 && (
+          {unpaid.length > 0 && noProcessorConfigured && (
             <div className="mt-6 rounded-control border border-gold-500/40 bg-gold-100/60 p-4 text-sm text-navy-900">
               Online payment isn&apos;t connected yet — for any unpaid invoice below, message us in{" "}
               <Link href="/portal/messages" className="font-semibold text-navy-800 underline hover:text-navy-900">
@@ -82,8 +108,11 @@ export default async function PortalPaymentsPage() {
                     <p className="text-xs text-slate">{formatDate(inv.created_at)}</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <p className="font-semibold text-navy-900">{formatAmount(inv.amount, inv.currency)}</p>
-                    <StatusPill status={inv.status} />
+                    <div className="text-right">
+                      <p className="font-semibold text-navy-900">{formatAmount(inv.amount, inv.currency)}</p>
+                      <StatusPill status={inv.status} />
+                    </div>
+                    {inv.status === "Unpaid" && <PayButton invoiceId={inv.id} currency={inv.currency} />}
                   </div>
                 </li>
               ))}
