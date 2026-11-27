@@ -48,6 +48,35 @@ export type RequestWithContext = PortalRequest & {
   project_name: string | null;
 };
 
+export type SiteVisitReport = {
+  id: string;
+  project_id: string;
+  visit_date: string;
+  summary: string;
+  status: "On Track" | "Minor Delay" | "Attention Required";
+  created_at: string;
+};
+
+export type ReportWithProject = SiteVisitReport & { project_name: string };
+
+export type ProjectDocument = {
+  id: string;
+  project_id: string;
+  title: string;
+  file_url: string;
+  uploaded_at: string;
+};
+
+export type DocumentWithProject = ProjectDocument & { project_name: string };
+
+export type Message = {
+  id: string;
+  customer_id: string;
+  sender: "customer" | "admin";
+  body: string;
+  created_at: string;
+};
+
 let schemaEnsured = false;
 
 export async function ensurePortalSchema(): Promise<void> {
@@ -82,20 +111,60 @@ export async function ensurePortalSchema(): Promise<void> {
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   )`);
+
+  await d1Query(`CREATE TABLE IF NOT EXISTS site_visit_reports (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    visit_date TEXT NOT NULL,
+    summary TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'On Track',
+    created_at TEXT NOT NULL
+  )`);
+
+  await d1Query(`CREATE TABLE IF NOT EXISTS project_documents (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    file_url TEXT NOT NULL,
+    uploaded_at TEXT NOT NULL
+  )`);
+
+  await d1Query(`CREATE TABLE IF NOT EXISTS messages (
+    id TEXT PRIMARY KEY,
+    customer_id TEXT NOT NULL,
+    sender TEXT NOT NULL,
+    body TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  )`);
 }
 
 // --- Dev-only local JSON file store -------------------------------------
 
-type LocalStore = { customers: Customer[]; projects: Project[]; requests: PortalRequest[] };
+type LocalStore = {
+  customers: Customer[];
+  projects: Project[];
+  requests: PortalRequest[];
+  reports: SiteVisitReport[];
+  documents: ProjectDocument[];
+  messages: Message[];
+};
 
 const LOCAL_FILE = path.join(process.cwd(), "data", "portal.json");
 
 function readLocal(): LocalStore {
   try {
     const raw = fs.readFileSync(LOCAL_FILE, "utf-8");
-    return JSON.parse(raw) as LocalStore;
+    const parsed = JSON.parse(raw) as Partial<LocalStore>;
+    return {
+      customers: parsed.customers ?? [],
+      projects: parsed.projects ?? [],
+      requests: parsed.requests ?? [],
+      reports: parsed.reports ?? [],
+      documents: parsed.documents ?? [],
+      messages: parsed.messages ?? [],
+    };
   } catch {
-    return { customers: [], projects: [], requests: [] };
+    return { customers: [], projects: [], requests: [], reports: [], documents: [], messages: [] };
   }
 }
 
@@ -236,6 +305,25 @@ export async function createProject(input: {
   return project;
 }
 
+export type ProjectWithCustomer = Project & { customer_name: string; customer_email: string };
+
+export async function listAllProjects(): Promise<ProjectWithCustomer[]> {
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    return store.projects
+      .map((p) => {
+        const customer = store.customers.find((c) => c.id === p.customer_id);
+        return { ...p, customer_name: customer?.name ?? "Unknown", customer_email: customer?.email ?? "" };
+      })
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  }
+  return d1Query<ProjectWithCustomer>(
+    `SELECT p.*, c.name AS customer_name, c.email AS customer_email
+     FROM projects p JOIN customers c ON c.id = p.customer_id
+     ORDER BY p.created_at DESC`
+  );
+}
+
 export async function listProjectsForCustomer(customerId: string): Promise<Project[]> {
   if (!hasD1Credentials()) {
     return readLocal()
@@ -370,4 +458,189 @@ export async function linkRequestToNewProject(
     requestId,
   ]);
   return project;
+}
+
+// --- Site visit reports --------------------------------------------------
+
+export async function createSiteVisitReport(input: {
+  projectId: string;
+  visitDate: string;
+  summary: string;
+  status: SiteVisitReport["status"];
+}): Promise<SiteVisitReport> {
+  const report: SiteVisitReport = {
+    id: newId(),
+    project_id: input.projectId,
+    visit_date: input.visitDate,
+    summary: input.summary.trim(),
+    status: input.status,
+    created_at: new Date().toISOString(),
+  };
+
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    store.reports.push(report);
+    writeLocal(store);
+    return report;
+  }
+
+  await d1Query(
+    `INSERT INTO site_visit_reports (id, project_id, visit_date, summary, status, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+    [report.id, report.project_id, report.visit_date, report.summary, report.status, report.created_at]
+  );
+  return report;
+}
+
+export async function listReportsForProject(projectId: string): Promise<SiteVisitReport[]> {
+  if (!hasD1Credentials()) {
+    return readLocal()
+      .reports.filter((r) => r.project_id === projectId)
+      .sort((a, b) => b.visit_date.localeCompare(a.visit_date));
+  }
+  return d1Query<SiteVisitReport>(
+    "SELECT * FROM site_visit_reports WHERE project_id = ? ORDER BY visit_date DESC",
+    [projectId]
+  );
+}
+
+export async function listReportsForCustomer(customerId: string): Promise<ReportWithProject[]> {
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    const projectIds = new Set(store.projects.filter((p) => p.customer_id === customerId).map((p) => p.id));
+    return store.reports
+      .filter((r) => projectIds.has(r.project_id))
+      .map((r) => ({ ...r, project_name: store.projects.find((p) => p.id === r.project_id)?.name ?? "" }))
+      .sort((a, b) => b.visit_date.localeCompare(a.visit_date));
+  }
+  return d1Query<ReportWithProject>(
+    `SELECT r.*, p.name AS project_name FROM site_visit_reports r
+     JOIN projects p ON p.id = r.project_id
+     WHERE p.customer_id = ? ORDER BY r.visit_date DESC`,
+    [customerId]
+  );
+}
+
+// --- Project documents -----------------------------------------------------
+
+export async function createDocument(input: {
+  projectId: string;
+  title: string;
+  fileUrl: string;
+}): Promise<ProjectDocument> {
+  const document: ProjectDocument = {
+    id: newId(),
+    project_id: input.projectId,
+    title: input.title.trim(),
+    file_url: input.fileUrl,
+    uploaded_at: new Date().toISOString(),
+  };
+
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    store.documents.push(document);
+    writeLocal(store);
+    return document;
+  }
+
+  await d1Query(`INSERT INTO project_documents (id, project_id, title, file_url, uploaded_at) VALUES (?, ?, ?, ?, ?)`, [
+    document.id,
+    document.project_id,
+    document.title,
+    document.file_url,
+    document.uploaded_at,
+  ]);
+  return document;
+}
+
+export async function listDocumentsForProject(projectId: string): Promise<ProjectDocument[]> {
+  if (!hasD1Credentials()) {
+    return readLocal()
+      .documents.filter((d) => d.project_id === projectId)
+      .sort((a, b) => b.uploaded_at.localeCompare(a.uploaded_at));
+  }
+  return d1Query<ProjectDocument>("SELECT * FROM project_documents WHERE project_id = ? ORDER BY uploaded_at DESC", [
+    projectId,
+  ]);
+}
+
+export async function listDocumentsForCustomer(customerId: string): Promise<DocumentWithProject[]> {
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    const projectIds = new Set(store.projects.filter((p) => p.customer_id === customerId).map((p) => p.id));
+    return store.documents
+      .filter((d) => projectIds.has(d.project_id))
+      .map((d) => ({ ...d, project_name: store.projects.find((p) => p.id === d.project_id)?.name ?? "" }))
+      .sort((a, b) => b.uploaded_at.localeCompare(a.uploaded_at));
+  }
+  return d1Query<DocumentWithProject>(
+    `SELECT d.*, p.name AS project_name FROM project_documents d
+     JOIN projects p ON p.id = d.project_id
+     WHERE p.customer_id = ? ORDER BY d.uploaded_at DESC`,
+    [customerId]
+  );
+}
+
+// --- Messages ------------------------------------------------------------
+
+export async function createMessage(input: {
+  customerId: string;
+  sender: Message["sender"];
+  body: string;
+}): Promise<Message> {
+  const message: Message = {
+    id: newId(),
+    customer_id: input.customerId,
+    sender: input.sender,
+    body: input.body.trim(),
+    created_at: new Date().toISOString(),
+  };
+
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    store.messages.push(message);
+    writeLocal(store);
+    return message;
+  }
+
+  await d1Query(`INSERT INTO messages (id, customer_id, sender, body, created_at) VALUES (?, ?, ?, ?, ?)`, [
+    message.id,
+    message.customer_id,
+    message.sender,
+    message.body,
+    message.created_at,
+  ]);
+  return message;
+}
+
+export async function listMessagesForCustomer(customerId: string): Promise<Message[]> {
+  if (!hasD1Credentials()) {
+    return readLocal()
+      .messages.filter((m) => m.customer_id === customerId)
+      .sort((a, b) => a.created_at.localeCompare(b.created_at));
+  }
+  return d1Query<Message>("SELECT * FROM messages WHERE customer_id = ? ORDER BY created_at ASC", [customerId]);
+}
+
+export type CustomerWithLastMessage = Customer & { last_message_at: string | null; message_count: number };
+
+export async function listCustomersWithMessageSummary(): Promise<CustomerWithLastMessage[]> {
+  if (!hasD1Credentials()) {
+    const store = readLocal();
+    return store.customers
+      .map((c) => {
+        const own = store.messages.filter((m) => m.customer_id === c.id);
+        return {
+          ...c,
+          message_count: own.length,
+          last_message_at: own.length ? own[own.length - 1].created_at : null,
+        };
+      })
+      .sort((a, b) => (b.last_message_at ?? "").localeCompare(a.last_message_at ?? ""));
+  }
+  return d1Query<CustomerWithLastMessage>(
+    `SELECT c.*, COUNT(m.id) AS message_count, MAX(m.created_at) AS last_message_at
+     FROM customers c LEFT JOIN messages m ON m.customer_id = c.id
+     GROUP BY c.id
+     ORDER BY last_message_at DESC`
+  );
 }

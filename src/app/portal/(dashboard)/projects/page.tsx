@@ -38,14 +38,18 @@ export default async function PortalProjectsPage() {
       ) : (
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
-            <div key={p.id} className="rounded-card border border-line bg-paper p-5 shadow-card">
+            <Link
+              key={p.id}
+              href={`/portal/projects/${p.id}`}
+              className="block rounded-card border border-line bg-paper p-5 shadow-card hover:border-navy-800"
+            >
               <div className="flex items-start justify-between gap-2">
                 <p className="font-semibold text-navy-900">{p.name}</p>
                 <StatusPill status={p.status} />
               </div>
               {p.tier && <p className="mt-1 text-sm font-medium text-gold-600">{p.tier}</p>}
               <p className="mt-3 text-xs text-slate">Since {formatDate(p.created_at)}</p>
-            </div>
+            </Link>
           ))}
         </div>
       )}
