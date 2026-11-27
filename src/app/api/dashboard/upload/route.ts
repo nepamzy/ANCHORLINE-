@@ -11,6 +11,7 @@ const MAX_BYTES_BY_KIND: Record<string, number> = {
   media: 20 * 1024 * 1024, // 20MB — images
   report: 20 * 1024 * 1024, // 20MB — PDF/image sample report
   video: 500 * 1024 * 1024, // 500MB — the single homepage hero video (dev-only path; production uploads go straight to R2, see /api/dashboard/upload/blob-token)
+  portal_document: 20 * 1024 * 1024, // 20MB — a client portal project document (report PDF, photo, etc.)
 };
 
 const ALLOWED_BY_KIND: Record<string, { mimes: string[]; ext: Record<string, string> }> = {
@@ -25,6 +26,15 @@ const ALLOWED_BY_KIND: Record<string, { mimes: string[]; ext: Record<string, str
   video: {
     mimes: ["video/mp4"],
     ext: { "video/mp4": ".mp4" },
+  },
+  portal_document: {
+    mimes: ["application/pdf", "image/png", "image/jpeg", "image/webp"],
+    ext: {
+      "application/pdf": ".pdf",
+      "image/png": ".png",
+      "image/jpeg": ".jpg",
+      "image/webp": ".webp",
+    },
   },
 };
 
@@ -57,7 +67,7 @@ export async function POST(request: Request) {
   if (!(file instanceof File)) {
     return NextResponse.json({ ok: false, error: "No file provided." }, { status: 400 });
   }
-  if (kind !== "media" && kind !== "report" && kind !== "video") {
+  if (kind !== "media" && kind !== "report" && kind !== "video" && kind !== "portal_document") {
     return NextResponse.json({ ok: false, error: "Invalid upload kind." }, { status: 400 });
   }
 
@@ -77,7 +87,8 @@ export async function POST(request: Request) {
   }
 
   const ext = allowed.ext[file.type];
-  const subdir = kind === "media" ? "media" : kind === "video" ? "video" : "reports";
+  const subdir =
+    kind === "media" ? "media" : kind === "video" ? "video" : kind === "portal_document" ? "portal-documents" : "reports";
   const safeName = `${subdir}/${Date.now()}-${crypto.randomBytes(6).toString("hex")}${ext}`;
 
   if (!hasR2Credentials()) {
