@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCustomerByEmail } from "@/lib/portal-db";
+import { getCustomerByEmail, ensurePortalSchema } from "@/lib/portal-db";
 import { verifyPassword, createCustomerSessionToken, CUSTOMER_SESSION_COOKIE_NAME } from "@/lib/portal-auth";
 import { isRateLimited } from "@/lib/rate-limit";
 
@@ -31,6 +31,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Email and password are required." }, { status: 400 });
   }
 
+  await ensurePortalSchema();
   const customer = await getCustomerByEmail(email);
   if (!customer || !verifyPassword(password, customer.password_hash)) {
     return NextResponse.json({ ok: false, error: "Incorrect email or password." }, { status: 401 });
