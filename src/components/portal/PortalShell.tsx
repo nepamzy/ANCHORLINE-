@@ -1,8 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import { NotificationButton } from "./NotificationButton";
+import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 
 const navItems = [
   { href: "/portal", label: "Overview", icon: "overview" },
@@ -66,9 +69,7 @@ export function PortalShell({
   const sidebarContent = (
     <>
       <div className="flex items-center gap-2.5 px-5 pt-6 pb-7">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold-500 font-mono text-base text-gold-400">
-          ⚓
-        </span>
+        <Image src="/assets/logo/anchorline-mark.png" alt="" width={443} height={457} className="h-9 w-auto shrink-0" />
         <div>
           <p className="font-display text-sm font-bold tracking-wide text-paper">ANCHORLINE</p>
           <p className="font-mono text-[9px] tracking-[0.2em] text-paper/50">CLIENT PORTAL</p>
@@ -146,21 +147,8 @@ export function PortalShell({
           </p>
 
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className="hidden h-9 w-9 items-center justify-center rounded-full border border-line text-slate hover:text-navy-900 sm:inline-flex"
-              aria-label="Notifications"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 13 6 9Z M10 18a2 2 0 0 0 4 0"
-                  stroke="currentColor"
-                  strokeWidth="1.7"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
+            <InstallAppButton className="hidden items-center gap-1.5 rounded-control border border-line px-3 py-2 text-xs font-semibold text-slate hover:text-navy-900 sm:inline-flex" />
+            <NotificationButton />
             <Link href="/portal/profile" className="flex items-center gap-2.5">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-navy-100 text-xs font-bold text-navy-900">
                 {initials || "?"}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireSessionResponse } from "@/lib/dashboard-auth";
 import { updateRequestStatus, linkRequestToNewProject, listAllRequests } from "@/lib/portal-db";
+import { notifyCustomer } from "@/lib/push";
 
 export const runtime = "nodejs";
 
@@ -31,6 +32,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     if (!target) return NextResponse.json({ ok: false, error: "Request not found." }, { status: 404 });
 
     const project = await linkRequestToNewProject(id, { customerId: target.customer_id, name, tier: tier || null });
+    notifyCustomer(target.customer_id, {
+      title: "Your project is live",
+      body: `"${name}" has been created and linked to your account.`,
+      url: `/portal/projects/${project.id}`,
+    }).catch(() => {});
     return NextResponse.json({ ok: true, project });
   }
 

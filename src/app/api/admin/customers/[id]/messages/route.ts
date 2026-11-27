@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireSessionResponse } from "@/lib/dashboard-auth";
 import { createMessage, listMessagesForCustomer } from "@/lib/portal-db";
+import { notifyCustomer } from "@/lib/push";
 
 export const runtime = "nodejs";
 
@@ -35,5 +36,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   }
 
   const message = await createMessage({ customerId: id, sender: "admin", body: text });
+  notifyCustomer(id, { title: "New message from Anchorline", body: text, url: "/portal/messages" }).catch(() => {});
   return NextResponse.json({ ok: true, message });
 }

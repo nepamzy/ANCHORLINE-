@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireSessionResponse } from "@/lib/dashboard-auth";
-import { createSiteVisitReport } from "@/lib/portal-db";
+import { createSiteVisitReport, getProjectById } from "@/lib/portal-db";
+import { notifyCustomer } from "@/lib/push";
 
 export const runtime = "nodejs";
 
@@ -39,5 +40,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     summary,
     status: status as (typeof VALID_STATUSES)[number],
   });
+
+  const project = await getProjectById(projectId);
+  if (project) {
+    notifyCustomer(project.customer_id, {
+      title: "New site visit report",
+      body: `${project.name}: ${summary}`,
+      url: `/portal/projects/${projectId}`,
+    }).catch(() => {});
+  }
+
   return NextResponse.json({ ok: true, report });
 }
