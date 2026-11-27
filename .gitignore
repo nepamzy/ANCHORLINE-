@@ -41,6 +41,7 @@ yarn-error.log*
 /data/*.db
 /data/*.db-*
 /data/content.json
+/data/portal.json
 /public/uploads/*
 !/public/uploads/.gitkeep
 

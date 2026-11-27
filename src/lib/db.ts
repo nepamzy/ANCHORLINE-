@@ -24,7 +24,7 @@ import path from "node:path";
  * has no effect on production.
  */
 
-function hasD1Credentials(): boolean {
+export function hasD1Credentials(): boolean {
   return Boolean(
     process.env.CLOUDFLARE_ACCOUNT_ID &&
       process.env.CLOUDFLARE_API_TOKEN &&
@@ -32,7 +32,7 @@ function hasD1Credentials(): boolean {
   );
 }
 
-async function d1Query<T = unknown>(sql: string, params: unknown[] = []): Promise<T[]> {
+export async function d1Query<T = unknown>(sql: string, params: unknown[] = []): Promise<T[]> {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID;
   const token = process.env.CLOUDFLARE_API_TOKEN;
