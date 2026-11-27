@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createCustomer } from "@/lib/portal-db";
+import { createCustomer, ensurePortalSchema } from "@/lib/portal-db";
 import { hashPassword, createCustomerSessionToken, CUSTOMER_SESSION_COOKIE_NAME } from "@/lib/portal-auth";
 import { isRateLimited } from "@/lib/rate-limit";
 
@@ -41,12 +41,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Password must be at least 8 characters." }, { status: 400 });
   }
 
+  await ensurePortalSchema();
+
   let customer;
   try {
     customer = await createCustomer({ name, email, passwordHash: hashPassword(password), phone: phone || null });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Could not create account.";
-    return NextResponse.json({ ok: false, error: message }, { status: 409 });
+    if (err instanceof Error && err.message.includes("already exists")) {
+      return NextResponse.json({ ok: false, error: err.message }, { status: 409 });
+    }
+    console.error("[portal] Signup failed:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ ok: false, error: "Could not create account. Please try again." }, { status: 500 });
   }
 
   const token = createCustomerSessionToken(customer.id);
